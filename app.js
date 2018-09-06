@@ -102,7 +102,7 @@ var app = new Vue({
 
             // google chart headers
             var fin = this.data.policeP1Times.map(this.mapper.bind(this))
-            fin.unshift(['Date', 'Response Time (min)', 'Total Calls'])
+            fin.unshift(['Date', 'Response Time (min)', 'Total P1 Calls'])
 
             // google chart data
             var data = new google.visualization.arrayToDataTable(fin)
@@ -499,7 +499,7 @@ var app = new Vue({
                     labels: data.map(function(time) { return time.date }),
                     datasets: [
                         {
-                            label: 'Total '+(id.indexOf('knm')==-1?'Calls':'Open Work Orders'),
+                            label: 'Total '+(id.indexOf('knm')==-1?(id.indexOf('ps-line1')==-1?'Calls':'P1 Calls'):'Open Work Orders'),
                             // backgroundColor: ,
                             borderColor: colors[1],
                             pointRadius: 0,
