@@ -1,0 +1,231 @@
+/*...............................................................*/  
+/*General*/
+    html,body {
+        height:100%;
+        width:100%;
+        font-family:'Droid Sans', 'sans-serif' !important;
+		background-color: whitesmoke;
+		overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+
+/*...............................................................*/    	
+/*Navbar*/
+    .navbar { 
+      border-radius: 0px !important; 		 
+      margin-bottom: 0px !important;
+      background-color: #5E2590 !important;
+      color: white !important;
+      background: linear-gradient(135deg, #5e2590 0%,#5e2590 50%,#7831b7 74%,#7831b7 100%);
+      height: 100px;
+    }
+    .navbar-default{
+      border-color:#5E2590 !important;
+    }
+    .navbar-brand > .nav-site-title {
+      color: white !important;
+      text-shadow: 1px 1px black !important;
+      margin-top: 40px !important;
+      font-size: 1.3em;
+    }
+    .navbar-brand > img, .navbar-brand > h1 {
+        float:left;
+    }
+    .nav-city-logo{
+        height: 107px;
+        margin-top: -15px;
+        margin-left: 0px;
+    }
+    .nav-city-logo-xs{
+        position: absolute;
+        height: 70px !important;
+        top: 0;
+        left: 0;        
+    }
+    .nav-site-title-xs{
+        color: white !important;
+        text-shadow: 1px 1px black !important; 
+        font-size: 1.3em;       
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding-left: 7px;
+        padding-top: 60px;
+    }
+    .nav-site-title > small{
+		color: yellow !important;
+	}
+    .navbar-toggle{
+        z-index: 1;
+    }
+    .nav-site-description{
+        padding-left: 2em;
+        padding-right: 2em;
+    }
+
+/*...............................................................*/
+/*Site Layout*/
+    .date-range-container{
+        padding-left: 2em;
+        padding-right: 2em;
+        color: black;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        display: block;
+        padding-top: 10px;
+        padding-bottom:10px;
+        height: 50px;
+        width: 100%;
+        background-color: #e4e2f3;
+    }
+    .date-range-container *{
+        float: left;
+        margin-right: 0.75em;
+    }
+    .date-range-container label{
+        margin-top: 5px;
+    }
+    .date-range-container input[type="date"]{
+        width: 160px;
+    }
+    #donutchart{
+        width: 100%;
+    }
+    #columnchart{ 
+        width: 100%;         
+    }
+    #linechart{
+        width: 100%;
+        height: 500px;
+        margin-bottom: 2em;
+    }
+
+/*...............................................................*/
+/*Modals*/
+        
+    /*All modals*/
+        .modal-header{
+            background-color: #e4e2f3;
+        }
+
+        .modal-data-loading-message{
+            display: block;
+            text-align: center;
+            margin-top: 100px;
+            font-size: 2em;
+        }
+        .modal-header .close{
+            margin-top: -30px !important;
+        }
+
+    /*Details Table*/
+        #popupCalls .modal-body{
+            height: 400px;
+        }
+        .google-visualization-table-th{
+            background-color: #5e2590 !important;
+            color: white;        
+        }
+        .google-visualization-table th{
+            border-color:#8654b1;
+            font-weight: normal !important;
+        }
+        .google-visualization-table .gradient {
+            background-image: none !important;
+        }
+        .google-visualization-table-td{
+            padding: 4px !important;
+        }
+        .google-visualization-table-div-page {
+            background-image: none !important;
+            background-color: white;
+        }
+
+        .modal-dialog{width: calc(100% - 50px) !important;}
+
+/*---------------------------------------------------*/
+/*Other*/
+            p{
+                margin-bottom: 2px;
+            }
+            #bannerCurrentRT{
+                width: 100%; 
+                text-align: center;
+            } 
+            
+            .colcharttooltip{
+                margin: 10px;
+                border: none;
+                white-space:nowrap;
+            }
+            .colcharttooltip tr{
+                border-bottom: solid 1px gray;
+            }
+            .colcharttooltip td{
+                padding: 5px;
+            }
+            #arrow-right {
+                width: 0; 
+                height: 0; 
+                border-top: 250px solid transparent;
+                border-bottom: 250px solid transparent;                
+                border-left: 100px solid whitesmoke;
+                float: left;
+            }
+            .row{
+                padding:1em !important;
+            }
+            hr {margin-bottom: 2px; margin-top: 1px; border-color: gray;}
+                      
+/*---------------------------------------------------*/
+/*Media Queries*/    
+
+    /*Phones and Tablets*/
+        @media only screen and (max-width: 1024px){
+            .modal-dialog{
+                width: calc(100vw - 25px) !important;
+                height: calc(100vh - 25px) !important;
+            } 
+            .chart-container-col{
+                margin-bottom:2em;
+            }
+            .date-range-container{
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+            .date-range-container *{
+                margin-right: 5px;
+            }
+            .date-range-container label{
+                font-size: 0.7em;
+                margin-top:8px;
+            }
+            .date-range-container input[type="date"]{
+                width: 23vw;
+                min-width: 72px;
+                max-width: 150px;
+                font-size: 0.7em;
+                padding-left:1px;
+                padding-right:1px;
+            }
+            .date-range-container button{
+                width: 65px;
+            }
+            
+        }
+        @media only screen and (min-width: 769px) and (max-width:1003px){
+            
+        } 
+    /*Desktop: Screen is greater than 1,025px wide*/
+        @media only screen and (min-width: 1025px){ 
+            .chart-container-col .donut-chart-container{
+                width: 50%;
+            }
+            .chart-container-col .column-chart-container{
+                width: 50%;
+            }
+        }
+
+    
+    
+           

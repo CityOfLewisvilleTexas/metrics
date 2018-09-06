@@ -1,0 +1,66 @@
+<!--Static-Metrics: Cards-->
+        <div class="row">
+		
+			<div ng-repeat="sm in vm.staticmetrics.metrics | orderBy: 'orderby'" class="col-md-6 col-lg-3 metric-card">
+				
+				<!--Metric Title-->
+                <div class="row metric-title">
+					{{sm.metricname}} 
+					<a href="{{sm.editurl}}" target="_blank" class="metric-title-edit-button btn btn-warning" ng-if="vm.editmode==true">Edit</a>
+				</div>
+				
+				<!--Column 1-->
+				<div class="metric-card-col-1 col-xs-12 col-sm-5 col-md-5" >
+
+					<!--Difference from yesterday-->
+					<div class="metric-diff row">
+						<span class="metric-diff-symbol" ng-style="pm.diff_color"></span>
+						<span class="metric-diff-symbol" ng-style="pm.diff_color"></span>
+						<span class="metric-diff-text">...</span>
+					</div>
+
+					<!--Static-Metric Value-->
+					<div class="gauge row static-metric-value"><div><span class="glyphicon glyphicon-{{sm.metricsymbol}}"></span></div></div>
+					
+					<!--Current Count (for percent metrics)-->
+					<div class="metric-current-count row"></div>
+															
+					<!--Button: In-Depth Analysis: Only show if there is data in the pm.url field-->
+					<div class="metric-btn-wrapper" ng-if="vm.staticmetrics.hasUrlField(sm.id)==true">
+						<a 
+							class="btn btn-primary metric-btn-actions"
+							href="{{sm.metriclink}}"
+							target="_blank"
+							>
+							<span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> &nbsp In-Depth Analysis
+						</a>
+					</div>
+				</div> <!--end col-->
+
+				<!--Column 2-->
+				<div class="metric-card-col-2 col-xs-12 col-sm-7 col-md-7">
+
+					<div class="row metric-metadata-row">
+						<h4 class="metric-metadata-label">Department:</h4>                                        
+						<div class="metric-metadata-description">{{vm.categories.filter_by_id(sm.metriccat1)[0].title}}</div>
+
+						<h4 class="metric-metadata-label">Description:</h4>                                        
+						<div class="metric-metadata-description">{{sm.metricdesc}} </div>
+						
+						<h4 class="metric-metadata-label">Goal:</h4>
+						<div class="metric-metadata-goal">{{sm.metricgoal}}
+							<span ng-if="vm.ui_NotMeetingGoal($index)===false" class="notmeetinggoal">&nbsp (Needs Improvement)</span>
+						</div>
+						
+						<h4 class="metric-metadata-label">Data Source:</h4>
+						<div class="metric-metadata-datasource">{{sm.metricsource}}</div>
+						
+						<h4 class="metric-metadata-label">Entered on:</h4>
+						<div class="metric-metadata-lastrefreshed">{{sm.psofia_lastedited}}</div>
+					</div><!--end .row--> 
+
+				</div> <!--end col-->
+			
+			</div>
+			
+		</div>	

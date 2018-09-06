@@ -1,0 +1,67 @@
+/*General*/
+    html,body {
+        height:100%;
+        width:100%;
+        font-family:'Droid Sans', sans-serif !important;
+		background-color: whitesmoke;		/*#D7BAF1*/
+    }
+	
+	
+	
+	
+/*Footer*/
+	footer{
+		border-top: solid 1px gray;
+		padding-top: 0.5em;
+		padding-bottom: 0.5em;
+	}
+
+/*Google Gauge*/
+	  
+      .gauge svg > g > circle{
+        stroke:transparent; 
+        fill: transparent;
+      }
+      /*Middle circle*/
+      .gauge svg > g > g > circle{     
+        stroke: transparent;
+        stroke-width: 0px;
+        fill: dimgray;        
+      }
+      /*Needle arm*/
+      .gauge svg > g > g > path[stroke="#c63310"][fill-opacity="0.7"]{
+        stroke:dimgray;
+        fill: dimgray;
+        fill-opacity: 1;
+      }     
+      /*Red*/
+      .gauge svg > g path[fill="#dc3912"][stroke="none"], .gauge svg > g path[fill="#ff9900"][stroke="none"]{
+        fill: #ccc;
+      } 
+      /*Fade-In*/     
+      .gauge svg > g > circle{
+        animation:fade-gauge 1s linear;
+        transform: translateZ(0);
+      } 
+      /*Hashes*/
+      .gauge svg > g > path[stroke="#666666"]{
+        stroke:transparent;
+      }
+      
+		@keyframes ripple {
+			0%  {box-shadow: 0 0px 0px darkgray,0 5px 10px transparent;}
+			25%  {box-shadow: 0 5px 10px darkgray,0 5px 10px transparent;}
+			50%  {box-shadow: 0 15px 20px darkgray,0 5px 10px transparent;}
+			75%  {box-shadow: 0 20px 25px darkgray,0 5px 10px transparent;}
+			100% {box-shadow: 0 25px 30px darkgray,0 5px 10px transparent;}
+		}
+		@keyframes fade-gauge {
+			50%   {          
+				fill: whitesmoke;
+			}
+		}
+		@keyframes loading {
+			50%   {          
+				color: red;
+			}
+		}

@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+    <head>
+        <title>COL Metrics Details</title>
+
+        <link href="https://fonts.googleapis.com/css?family=Roboto:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+        <link rel="apple-touch-icon" sizes="120x120" href="images/apple-touch-icon.png">
+        <link rel="icon" type="image/png" href="images/favicon-32x32.png" sizes="32x32">
+        <link rel="icon" type="image/png" href="images/favicon-16x16.png" sizes="16x16">
+        <link rel="manifest" href="images/manifest.json">
+        <link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#5bbad5">
+        <meta name="theme-color" content="#ffffff">
+
+        <!--Allow "Add to homescreen" on mobile browsers-->
+        <meta name="mobile-web-app-capable" content="yes">
+
+        <!--Keep mobile browsers at correct zoom-->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+        <!--Custom CSS-->
+        <link rel="stylesheet" href="styles/main.css"/>
+
+        <!--Fonts-->
+        <link href='https://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+
+        <!--jQuery-->
+         <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+
+        <!--Bootstrap-->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+        <!--AngularJS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.2/angular.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.3/angular-route.min.js"></script>
+        <script src="scripts/ng-chart.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls.min.js"></script>
+
+        <!--DateJS-->
+        <script src="scripts/datejs.js"></script>
+        
+        <!--Our js-->
+        <script src="scripts/main.js"></script>
+
+    </head>
+
+    <body ng-app="app">      
+      <script>
+          var isIE11 = !!navigator.userAgent.match(/Trident.*rv\:11\./);
+          if (isIE11){
+            window.location = window.location.protocol + '//' + window.location.host + window.location.pathname + '/views/browsernotsupported.html';
+          }
+      </script>
+	  
+	   <!---------------------------------->
+		<!--Google Analytics-->
+		<!--https://www.google.com/analytics/web/?authuser=0#realtime/rt-content/a35815214w63720524p65383322/-->
+		
+		
+		<!--<script type="text/javascript"> var _gaq = _gaq || []; _gaq.push(['_setAccount', 'UA-35815214-1']); _gaq.push(['_trackPageview']); (function () { var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); })(); </script> -->
+		
+		<!---------------------------------->
+
+	  
+      <div ng-view></div>
+
+    </body>
+</html>

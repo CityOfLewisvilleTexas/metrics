@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- manifest -->
+    <link rel="manifest" href="./manifest.txt">
+    <title>COL Metrics</title>
+    <!-- <link rel="shortcut icon" href="../CityLogos/favicon.ico" type="image/x-icon"> -->
+    <!-- force no compatibility mode in IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+    <!-- google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Product+Sans:100,100i, 200,200i, 300,300i, 400,400i,700,700i" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- styles -->
+    <link rel="stylesheet" type="text/css" href="style.css" title="styles" media="screen" />
+    <link rel="stylesheet" title="styles" href="../materialize/css/materialize.min.css">
+    <!-- google charts -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <!-- Vue -->
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    <!-- JQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <!-- axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- materialize -->
+    <script src="../materialize/js/materialize.js"></script>
+    <!-- mobile friendly -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- pretty -->
+    <meta name="theme-color" content="#673ab7">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <!-- navbar -->
+        <div class="navbar-not-fixed">
+            <nav>
+                <div id="top-nav" class="nav-wrapper city-purple-alt">
+                    <a data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
+                    <img src="../CityLogos/citylogo.svg" style="height: 100%" />
+                    <div class="brand-logo">
+                        <a href="http://metrics.cityoflewisville.com">City of Lewisville - 
+                            <span v-if="!stats">Metrics</span>
+                            <span v-else>Stats</span>
+                        </a>
+                        <small class="yellow-text" v-if="internal">&nbsp;&nbsp;INTERNAL</small>
+                        <small class="yellow-text" v-else-if="working">&nbsp;&nbsp;IN-DEVELOPMENT</small>
+                        <div class="switch" v-if="internal">
+                            <label>
+                            Internal Only
+                            <input type="checkbox" checked v-on:click="internalSwitch($event)">
+                            <span class="lever"></span>
+                            All
+                            </label>
+                        </div>
+                    </div>
+                    <ul class="right hide-on-med-and-down">
+                        <li>
+                            <a href="http://metrics.cityoflewisville.com" target="_blank">
+                                <i class="material-icons left">dashboard</i>Metrics Home
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://stats.cityoflewisville.com" target="_blank">
+                                <i class="material-icons left">insert_chart</i>Stats Home
+                            </a>
+                        </li>
+                        <li class="green">
+                            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfYEnw5sa4dGngKXpja9jhpLLVg6bWSnSAKEmyjX3d38eG5kw/viewform"
+                                target="_blank"
+                                rel="noopener">
+                                <i class="material-icons left">feedback</i>Feedback
+                            </a>
+                        </li>
+                        <!-- <li><a href="http://www.cityoflewisville.com" target="_blank">Lewisville Homepage</a></li> -->
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <!-- sidenav -->
+        <ul id="slide-out" class="side-nav fixed">
+            <!-- <li>
+                <a v-on:click="stagger('all', 'all', 'All Metrics', 1)">
+                    All metrics
+                    <span v-if="!metricsLoading" class="grey-text right">{{ count('a') }}</span>
+                </a>
+            </li> -->
+            <li class="sidenav-header">Departments</li>
+            <li v-for="(department, i) in departments" class="department" :key="'dept'+i" :class="{ 'grey lighten-2' : department.bmpdisplayname == currentCat }">
+                <a v-on:click="newRoute('department', department.bmpid, department.bmpdisplayname)">
+                    {{ department.bmpdisplayname }}
+                    <!-- <span v-if="!metricsLoading" class="grey-text right">{{ count('d', department[1]) }}</span> -->
+                    <span class="right grey-text">{{ catCount('category1', department.bmpid) }}</span>
+                </a>
+            </li>
+            <li class="sidenav-header">City Priorities</li>
+            <li v-for="(priority, i) in citypriorities" :key="'cp'+i" :class="{ 'grey lighten-2' : priority.bmpdisplayname == currentCat }">
+                <a v-on:click="newRoute('citypriority', priority.bmpid, priority.bmpdisplayname)">
+                    {{ priority.bmpdisplayname }}
+                    <!-- <span v-if="!metricsLoading" class="grey-text right">{{ count('p', priority[1]) }}</span> -->
+                    <span class="right grey-text">{{ catCount('cateogry3', priority.bmpid) }}</span>
+                </a>
+            </li>
+            <li class="sidenav-header">Big Moves</li>
+            <li v-for="(bigmove, i) in bigmoves" :key="'bm'+i" :class="{ 'grey lighten-2' : bigmove.bmpdisplayname == currentCat }">
+                <a v-on:click="newRoute('bigmove', bigmove.bmpid, bigmove.bmpdisplayname)">
+                    {{ bigmove.bmpdisplayname }}
+                    <!-- <span v-if="!metricsLoading" class="grey-text right">{{ count('b', bigmove[1]) }}</span> -->
+                    <span class="right grey-text">{{ catCount('category2', bigmove.bmpid) }}</span>
+                </a>
+            </li>
+
+        </ul>
+        <!-- main -->
+        <main>
+            <!-- second nav -->
+            <nav class="pushpinned">
+                <div class="nav-wrapper white">
+                    <div class="logo-holder center-align" :class="{ 'clear' : metricsLoading }">
+                        <div class="logo"></div>
+                    </div>
+                    <!-- <a href="#" data-activates="slide-out" class="button-collapse menu-btn"><i class="material-icons grey-text">menu</i></a> -->
+                    <a class="brand-logo navbar-title font-ps">{{ currentCat }}&nbsp;&nbsp;<small>{{ vMetrics.length }}</small></a>
+                    <div class="col s12 switch-holder" v-if="!stats">
+                        <div class="switch" style="display: inline-block;">
+                            <label>Query
+                                <input type="checkbox" id="query-switch" v-on:click="querySwitch($event)" checked>
+                                <span class="lever city-purple-light"></span>
+                                All
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="progress pink lighten-5" v-if="refreshing">
+                    <div class="indeterminate pink accent-3"></div>
+                </div>
+            </nav>
+            <div class="row"></div>
+            <div id="loader-container">
+                <div class="preloader-wrapper big active" v-if="hardRefreshing">
+                <div class="spinner-layer spinner-blue">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+                <div class="spinner-layer spinner-red">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+                <div class="spinner-layer spinner-green">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+                <div class="spinner-layer spinner-yellow">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- <div v-if="currentCat == 'Police' && !hardRefreshing && !refreshing" class="extra-link"> -->
+                    <p v-if="!hardRefreshing && !refreshing && (currentCat == 'Police' || currentCat == 'Finance' || currentCat == 'Controlling Costs' || currentCat == 'Citywide' || currentCat == 'Citizen Involvement' || currentCat == 'Neighborhood Services')">[See also:
+                        <a v-if="!hardRefreshing && !refreshing && currentCat == 'Police'" href="http://communitycrimemap.com/#" target="_blank"> Crime Map</a>
+                        <a v-if="!hardRefreshing && !refreshing && currentCat == 'Finance' || currentCat == 'Controlling Costs'" href="http://eservices.cityoflewisville.com/openbook/" target="_blank"> Check Register (view all checks issued)</a>
+                        <a v-if="!hardRefreshing && !refreshing && currentCat == 'Citywide'" href="http://www.cityoflewisville.com/home/showdocument?id=9746" target="_blank"> City survey</a>
+                        <a v-if="!hardRefreshing && !refreshing && currentCat == 'Citizen Involvement'" href="http://www.cityoflewisville.com/residents-info/resident-information/resident-surveys" target="_blank"> Citizen Survey</a>
+                        <a v-if="!hardRefreshing && !refreshing && currentCat == 'Neighborhood Services'" href="http://eservices.cityoflewisville.com/pepawards/" target="_blank"> PEP Award Dashboard</a>
+                        ]
+                    </p>
+                <!-- </div> -->
+            </div>
+            <!-- metric cards -->
+            <div class="row" id="metrics" v-if="!hardRefreshing">
+                <div id="dark-overlay"></div>
+                <ul id="list-of-metrics">
+                    <li v-for="metric in vMetrics" class="col s12 m10 l8 offset-m1 offset-l2 xl5" :id="'card-' + metric.psofia_recordid">
+                        <div>
+                            <div class="card">
+                                <div v-if="working || internal" class="status grey-text">
+                                    <span v-if="working">{{ metric.metricstatus }}</span>
+                                    <span v-if="metric.metricisinternal == 'true'">internal</span>
+                                </div>
+                                <div class="edit-buttons grey darken-3" v-if="edit">
+                                    <div
+                                        v-if="metric.metricisinternal != 'true'"
+                                        :id="'int-' + metric.psofia_recordid"
+                                        class="btn white waves-effect waves-dark black-text internal tooltipped"
+                                        v-on:click="pushInternal(metric, 'false', 'true', $event)"
+                                        data-position="bottom"
+                                        data-delay="0"
+                                        data-tooltip="Make internal only">
+                                        <i class="material-icons">exit_to_app</i>
+                                    </div>
+                                    <div
+                                        v-if="metric.metricispublic != 'true'"
+                                        :id="'int-' + metric.psofia_recordid"
+                                        class="btn white waves-effect waves-dark black-text internal tooltipped"
+                                        v-on:click="pushInternal(metric, 'true', 'false', $event)"
+                                        data-position="bottom"
+                                        data-delay="0"
+                                        data-tooltip="Make public">
+                                        <i class="material-icons">open_in_new</i>
+                                    </div>
+                                    <div v-if="metric.editurl"
+                                        class="btn white waves-effect waves-dark black-text edit tooltipped"
+                                        v-on:click="newTab(metric.editurl)"
+                                        data-position="bottom"
+                                        data-delay="0"
+                                        data-tooltip="Edit metric">
+                                        <i class="material-icons">edit</i>
+                                    </div>
+                                </div>
+                                <div class="card-content" :class="{
+                                    'greenv white-text' : getColor(metric) == 'greenv white-text' && !stats,
+                                    'yellowv white-text shadowed' : getColor(metric) == 'yellowv white-text shadowed' && !stats,
+                                    'redv white-text' : getColor(metric) == 'redv white-text' && !stats,
+                                    'grey darken-2 white-text' : getColor(metric) == 'grey darken-2 white-text' && !stats,
+                                    'deep-purple white-text' : stats }"
+                                    >
+                                    <div class="truncate metric-name">
+                                        <!-- <i class="material-icons left" v-if="metric.metrictype == 'Query'">autorenew</i> -->
+                                        <!-- <i class="material-icons left rotating" v-if="metric.metrictype == 'Query'">autorenew</i> -->
+                                        {{ metric.metricname }}
+                                    </div>
+                                </div>
+                                <div class="card-content row">
+                                    <!-- lefty -->
+                                    <div class="col s5 lefty center-align">
+                                        <div class="live-indicator grey-text" v-if="metric.metrictype == 'Query'">
+                                            LIVE<i class="material-icons left flicker green-text bold">check</i>
+                                        </div>
+                                        <div class="live-indicator grey-text" v-else>
+                                            STATIC<i class="material-icons left red-text bold">remove</i>
+                                        </div>
+                                        <div class="vs-yesterday-holder" v-if="metric.metrictype == 'Query'">
+                                            <div class="vs-yesterday-content">
+                                                <div class="vs-yesterday-value"
+                                                    :class="vsYesterdayClass(metric)">{{ vsYesterday(metric) }}</div>
+                                                <div class="vs-yesterday-text grey-text">vs yesterday</div>
+                                            </div>
+                                        </div>
+                                        <div class="vs-yesterday-fake" v-else></div>
+                                        <!-- gauge -->
+                                        <div :id="'gauge-'+metric.id" class="gauges"
+                                            v-if="(metric.metrictype == 'Query' && metric.gaugedataformat == 'PERCENT')
+                                                    || (metric.metrictype == 'Static' && metric.staticsymbol == 'Gauge')
+                                                    && (metric.gaugedataformat != 'INTEGER')"></div>
+                                        <!-- static int -->
+                                        <div class="metric-int really center-align grey-text text-darken-2"
+                                            v-else-if="metric.staticgauge && metric.gaugedataformat != 'PERCENT'">
+                                            {{ addChars(rinse(metric.staticgauge), metric) }}
+                                        </div>
+                                        <!-- integer -->
+                                        <div class="metric-int center-align grey-text text-darken-2"
+                                            v-else-if="metric.metrictype == 'Query' && metric.gaugedataformat == 'INTEGER'">
+                                            {{ addChars(rinse(metric.value), metric) }}
+                                        </div>
+                                        <!-- text -->
+                                        <div class="metric-int center-align grey-text text-darken-2"
+                                            v-else-if="metric.metrictype == 'Static' && metric.staticsymbol == 'Text'">{{ addChars(checkRinse(metric.statictext), metric) }}</div>
+                                        <!-- history button -->
+                                        <a class="col s12 btn waves-effect grey lighten-2 grey-text text-darken-2"
+                                            v-if="metric.metrictype == 'Query'"
+                                            v-on:click="setHistory(metric)"
+                                            :class="{ disabled: historyLoading }">
+                                            <i class="material-icons left">show_chart</i>History
+                                        </a>
+                                        <div class="col s12 history-loading-holder"
+                                            v-if="metric.metrictype == 'Query' && historyLoading"
+                                            :id="'historyloader-'+metric.id">
+                                            <div class="progress details-progress deep-purple lighten-5">
+                                                <div class="indeterminate city-purple-alt"></div>
+                                            </div>
+                                        </div>
+                                        <!-- details button -->
+                                        <a class="col s12 btn waves-effect grey lighten-2 grey-text text-darken-2"
+                                            v-if="metric.metrictype == 'Query'"
+                                            v-on:click="setDetails(metric)"
+                                            :class="{ disabled: detailsLoading }">
+                                            <i class="material-icons left">list</i>Details
+                                        </a>
+                                        <div class="col s12 details-loading-holder"
+                                            v-if="metric.metrictype == 'Query' && detailsLoading"
+                                            :id="'detailsloader-'+metric.id">
+                                            <div class="progress details-progress deep-purple lighten-5">
+                                                <div class="indeterminate city-purple-alt"></div>
+                                            </div>
+                                        </div>
+                                        <!-- in depth button -->
+                                        <a class="col s12 btn in-depth-btn waves-effect grey lighten-2 grey-text text-darken-2"
+                                            :href="metric.url"
+                                            target="_blank"
+                                            rel="noopener"
+                                            v-if="metric.url">
+                                            <i class="material-icons left">open_in_new</i>
+                                            <span v-if="metric.urllabel">{{ metric.urllabel}}</span>
+                                            <span v-else>In-Depth</span>
+                                        </a>
+                                    </div>
+                                    <!-- righty -->
+                                    <div class="col s7 details-col">
+                                        <!-- details -->
+                                        <div class="col s12 details-title">Department:</div>
+                                        <div class="col s12 details-text">{{ metric.category1_VSVal_ }}</div>
+                                        <div class="col s12 details-title">Description:</div>
+                                        <div class="col s12 details-text">{{ metric.metricdescription }}</div>
+                                        <div class="col s4 details-title" :class="{ 's12' : metric.metrictype != 'Query' }" v-if="!stats">Goal:</div>
+                                        <div class="col s8 details-title truncate"
+                                            v-if="metric.metrictype == 'Query'"
+                                            :class="{ 'col s12' : stats }">Period Measured:</div>
+                                        <div class="col s4 details-text" :class="{ 's12' : metric.metrictype != 'Query' }" v-if="!stats">{{ metric.metricgoal }}</div>
+                                        <div class="col s8 details-text"
+                                            v-if="metric.metrictype == 'Query'"
+                                            :class="{ 'col s12' : stats }">{{ metric.timeperiod }}</div>
+                                        <div class="col s12 details-title">Data Source:</div>
+                                        <div class="col s12 details-text">{{ metric.realtimedsdescription }}</div>
+
+                                        <div class="col s12 details-title"
+                                            v-if="metric.hidelastrefreshed == 'false'">
+                                            Last Updated:
+                                        </div>
+                                        <div class="col s12 details-text" v-if="metric.hidelastrefreshed == 'false' && metric.metrictype == 'Query' && !historyLoading">
+                                            {{ dateDiff(metric) }}
+                                            <br>
+                                            {{ getRefreshedDate(metric) }}
+                                        </div>
+                                        <div class="col s12 details-text" v-else-if="metric.hidelastrefreshed == 'false' && metric.metrictype == 'Static'">
+                                            {{ dateDiff(metric.psofia_finallastediteddate) }}
+                                            <br>
+                                            {{ prettyDate(metric.psofia_finallastediteddate) }}
+                                        </div>
+
+                                        <div v-if="metric.why">
+                                            <small class="pointy" v-on:click="openWhyModal(metric)">Why this metric?</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="col s12 m10 offset-m1 offset-l1 xl10 grey-text text-lighten-1 nothing-msg center-align" v-if="!metricsLoading && vMetrics.length < 1">No metrics to show here <i class="material-icons">sentiment_dissatisfied</i></div>
+            </div>
+            <!-- details -->
+            <div id="details-modal" class="modal modal-fixed-footer">
+                <div class="modal-header grey lighten-3">{{ detailsTitle }}</div>
+                <div class="modal-content">
+                    <!-- <div class="sort-helper grey-text">Click a header to sort table</div> -->
+                    <div class="row" style="padding-top: 50px;" id="details-table-holder">
+                        <table class="bordered scroll highlight centered responsive-table">
+                            <thead class="fixed-table-header">
+                                <tr>
+                                    <th v-for="header,i in detailsHeaders" v-on:click="sortDetails(i)" class="sorter">
+                                        {{ header }}
+                                        <span v-if="detailsSorted == i && detailsSort == -1" class="material-icons">keyboard_arrow_up</span>
+                                        <span v-if="detailsSorted == i && detailsSort == 1" class="material-icons">keyboard_arrow_down</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="row in detailsData">
+                                    <td v-for="val in row">{{ val }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="modal-action modal-close waves-effect waves-dark btn-flat">Done</div>
+                </div>
+            </div>
+            <!-- history -->
+            <div id="history-modal" class="modal modal-fixed-footer">
+                <div class="modal-header grey lighten-3">{{ historyTitle }}</div>
+                <div class="modal-content">
+                    <div class="row">
+                        <div id="historygraph"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="modal-action modal-close waves-effect waves-dark btn-flat">Done</div>
+                </div>
+            </div>
+            <!-- why -->
+            <div id="why-modal" class="modal">
+                <div class="modal-content">
+                    <h5>Why this metric?</h5>
+                    <p class="grey-text"><i>{{ whyTitle }}</i></p>
+                    <p>{{ whyText }}</p>
+                </div>
+                <div class="modal-footer">
+                    <a class="modal-action modal-close waves-effect btn-flat">Done</a>
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- source code -->
+    <script type="text/javascript" src="./moment/moment.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+</body>

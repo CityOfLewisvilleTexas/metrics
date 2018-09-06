@@ -1,0 +1,988 @@
+<!--<link rel="stylesheet" href="styles/details.css"/>-->
+<style type="text/css">
+    /*...............................................................*/  
+    /*General*/
+        html,body {
+            height:100%;
+            width:100%;
+            font-family:'Roboto', 'Droid Sans', 'sans-serif' !important;
+            background-color: #edf1f3;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;			
+        }
+
+    /*...............................................................*/    	
+    /*Navbar*/
+        .navbar { 
+			border-radius: 0px !important; 		 
+			margin-bottom: 0px !important;
+			background-color: #5E2590 !important;
+			color: white !important;
+			background: linear-gradient(135deg, #5e2590 0%,#5e2590 50%,#7831b7 74%,#7831b7 100%);
+			padding: 6px 0;
+        }
+        .navbar-default{
+			border-color:#5E2590 !important;
+        }
+        .navbar-brand > .nav-site-title {
+			color: white !important;
+			/*text-shadow: 1px 1px black !important;*/
+			/*margin-top: 40px !important;*/
+            margin: 0;
+			font-size: 19px;
+            font-weight: normal;
+        }
+        .navbar-brand > img, .navbar-brand > h1 {
+            float:left;
+        }
+        .nav-city-logo{
+            height: 57px;
+            width: 110px;
+            margin-top: -15px;
+            margin-left: 0px;
+            margin-right: 13px;
+        }
+        .nav-city-logo-xs{
+            position: absolute;
+            height: 70px !important;
+            top: 0;
+            left: 0;
+        }
+        .nav-site-title-xs{
+            color: white !important;
+            text-shadow: 1px 1px black !important; 
+            font-size: 1.3em;       
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding-left: 7px;
+            padding-top: 60px;
+        }
+        .nav-site-title > small{
+            color: yellow !important;
+        }
+        .navbar-toggle{
+            z-index: 1;
+        }
+        ._navbar-cityscore{
+			font-size: 30px;
+			color: white !important;
+			padding-top: 30px !important;
+			padding-bottom: 2px !important;
+			border-bottom: solid 1px #e4e2f3;			
+		}
+
+    /*...............................................................*/    
+    /*Sidebar and mobile navigation menus*/
+        
+        /*Mobile Nav*/
+            #nav_mobile{
+                background-color: black;
+                z-index: 1;
+                position: absolute;
+                padding-left: 2em;
+                width: 100%;
+            }
+
+        /*Sidebar*/
+            .sidebar{
+                background-color: transparent;
+                border-right: solid 1px gainsboro;
+                overflow-x: hidden;
+				overflow-y: scroll;
+				height: calc(100vh - 120px) !important;
+            }
+            .sidebar-nav{
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                margin-left:0.9em;
+            }
+            .sidebar-category-title{
+                font-size: 1.5em;
+                margin-top: 1em;
+                padding-bottom: 2px;
+                color: black;
+            }
+            .sidebar-category-li{
+                padding-top: 10px;
+                padding-bottom: 10px;
+				padding-left: 10px;
+                font-size: 1em;
+				border-bottom: solid 1px gainsboro;				
+            }  
+			.sidebar-category-link{
+				color: #262626 !important;
+			}
+			.sidebar-category-icon{
+				color: gray;
+			}
+            .sidebar-category-count{
+                font-size: 0.8em;
+                color: gray;
+            }
+
+    /*...............................................................*/    
+    /*Metric Cards*/ 
+	
+		/*Fixed-heights for all components (to avoid layout thrashing)*/
+			.metric-diff{
+				height: 31px !important;
+			}
+			.gauge-row {
+				height: 195px !important;
+			}
+            .integer {
+                line-height: 195px;
+                font-size: 65px;
+                text-align: center;
+                color: green;
+            }
+			.metric-btn-wrapper{
+				height: 34px !important;
+			}
+		
+		.static-metric-value{
+			/*Center horizontally and vertically*/
+			display: flex;
+            justify-content: center;
+            align-items: center;
+		}
+		.static-metric-value > div{
+			font-size: 65px;
+			font-weight: normal;
+			color: green;
+		}
+		
+        .category-title{
+            font-size: 2.5em;
+			padding-bottom: 3px !important;
+        }
+        .metric-card{      
+            background-color: white; 
+            box-shadow: 0 5px 10px darkgray,0 5px 10px whitesmoke;	
+            border: solid 4px transparent;
+            margin:5px;  	
+            margin-right: 15px;
+            margin-bottom: 15px;
+            padding: 2em !important;            
+        } 
+        .metric-card-col-1,.metric-card-col-2{
+            padding-left: 0;
+        }
+        .metric-title{
+            text-align: center;
+            border-bottom: solid 1px gray; 
+            background-color: #5E2590;
+            color: white !important;
+            font-size: 1.0em;
+            text-shadow: none !important;
+            height: 50px;  
+
+            /*Stretch all the way across the card*/
+            margin-top: -30px;
+            margin-left: -30px;
+            margin-right: -30px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .metric-title.lightenUp {
+            background-color: #a673d4;
+        }
+		.metric-title-metric-type{
+			position: absolute;
+			left: 2px;
+			top: 40px;
+			height: 35px;
+			width: 70px;
+			font-size: 0.9em;
+			padding: 2px;
+			padding-top: 8px;
+			color:black;
+			font-weight:bold;
+		}
+		.metric-title-edit-button{
+			position: absolute;
+			right: -10px;
+			top:-10px;
+			height: 25px;
+			width: 35px;
+			font-size: 0.9em;
+			padding: 2px;
+		}
+        .metric-diff{
+            text-align: right;
+			height: 31px !important;
+        }
+        .metric-diff-text{
+            display: block;
+            font-size: 6pt;
+        }
+        .metric-current-count{
+            text-align: center;
+            padding-top: 0;
+            font-size: 1.1em;
+            margin-top: -30px;
+            margin-bottom: 5px;
+            height: 25px;
+        }
+        .metric-btn-wrapper{
+            text-align: center;
+            margin-bottom: 3px;
+        }
+        .metric-btn-actions{
+            width: 175px;
+        }
+        .metric-metadata-label{
+            font-weight: bold;
+            font-size: 1em;
+            padding-bottom: 2px;
+            margin-bottom: 2px;
+            border-bottom: solid 1px gainsboro;
+        }
+
+        .loading{
+            font-size: 1em;
+            font-weight:bold;
+            color:black;
+            animation:loading 2s linear; 
+        }
+        .notmeetinggoal{
+            font-weight:bold;
+            color: darkred !important;      
+        }
+
+        .shrink {
+            font-size: 10px;
+        }
+
+    /*...............................................................*/
+    /*Gauges*/
+
+        /*Center the gauge*/
+            .gauge table{
+                width: auto;
+                margin: 0 auto !important;
+            }
+
+
+    /*...............................................................*/
+    /*Modals*/
+            
+        /*All modals*/
+            .modal-header{
+                background-color: #e4e2f3;
+            }
+
+            .modal-data-loading-message{
+                display: block;
+                text-align: center;
+                margin-top: 100px;
+                font-size: 2em;
+            }
+
+
+        /*Details Table*/
+            #modalTable .modal-body{
+                height: 400px;
+                /*overflow: scroll;*/
+            }
+            .details-table-th{
+                background-color: #5e2590;
+                color: white;        
+            }
+            .details-table-th th{
+                border-color:#8654b1;
+                font-weight: normal !important;
+				padding: 6px !important;
+            }
+            .google-visualization-table .gradient {
+                background-image: none !important;
+            }
+            .details-table-td{
+                padding: 6px !important;
+            }
+            .google-visualization-table-div-page {
+                background-image: none !important;
+                background-color: white;
+            }
+
+        /* fixes the weird tablet nav */
+        @media (min-width: 768px) {
+            .navbar-collapse.collapse {
+                display: none !important;
+            }
+        }
+
+    /*...............................................................*/    
+    /*Media Queries*/
+        /*Phones and Tablets*/
+            @media only screen and (max-width: 1024px){
+
+                /*Sidebar links as buttons*/
+                    .sidebar-category-li{
+                        padding-top: 8px;
+                        padding-bottom: 8px;
+                        font-size: 1.2em;
+                    }
+
+                    /* unnecessary */
+                    .sidebar-category-link-bak{
+                        height: 50px;
+                        width: calc(100% - 25px);
+                        max-width: 250px;
+
+                        /*Bootstrap button look*/
+                        display: inline-block;
+                        padding: 12px 12px;
+                        margin-bottom: 0;
+                        font-size: 14px;
+                        font-weight: 400;
+                        line-height: 1.42857143;
+                        text-align: left !important;
+                        white-space: nowrap;
+                        vertical-align: middle !important;
+                        -ms-touch-action: manipulation;
+                        touch-action: manipulation;
+                        cursor: pointer;
+                        -webkit-user-select: none;
+                        -moz-user-select: none;
+                        -ms-user-select: none;
+                        user-select: none;
+                        background-image: none;
+                        border: 1px solid transparent;
+                        border-radius: 4px;
+                        
+                        color: #fff;
+                        /*background-color: #337ab7;*/
+                        border-color: #2e6da4;
+
+                        text-shadow: 0 -1px 0 rgba(0,0,0,.2);
+                        -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 1px rgba(0,0,0,.075);
+                        box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 1px rgba(0,0,0,.075);
+
+                        /*background-image: -webkit-linear-gradient(top,#337ab7 0,#265a88 100%);
+                        background-image: -o-linear-gradient(top,#337ab7 0,#265a88 100%);
+                        background-image: -webkit-gradient(linear,left top,left bottom,from(#337ab7),to(#265a88));
+                        background-image*/: linear-gradient(to bottom,#337ab7 0,#265a88 100%);
+                        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff337ab7', endColorstr='#ff265a88', GradientType=0);
+                        filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+                        background-repeat: repeat-x;
+                        /*border-color: #245580;*/
+                    }
+
+                    .metric-diff{
+                        text-align: left;
+                    }
+
+                    .sidebar-category-count{
+                        font-size: 0.8em;
+                        /*color: white !important;*/
+                    }
+                    
+                /*Modals*/
+                    .modal-dialog{
+                        width: calc(100vw - 25px) !important;
+                        height: calc(100vh - 25px) !important;
+                    } 
+            }
+
+        /*Phones: Screen is less than 768px wide*/
+            @media only screen and (max-width: 767px){ 
+
+                /*Main Layout*/  
+                    .sidebar{
+                        display: none;
+                    }
+                    .sidebar-category-li{
+                        font-size: 1.1em;
+                    }
+                    .main-column{
+                        margin-left: 1.5em; /*left-hand padding to 'center' cards on small screens*/
+                        margin-right: 0px;
+                    }  
+
+                /*Metric Cards*/
+                    .metric-card{
+                        width: 93%;
+                    }
+                    .metric-title{
+                        height: 75px;
+                    } 
+                    .metric-metadata-row{
+                        padding-left: 10px !important;
+                    }
+                    
+
+                /*Gauges*/                          
+                    .gauge svg{
+                        zoom: 100%;
+                    }
+                    /*Firefox specific zoom for size of gauge*/
+                    @-moz-document url-prefix() {
+                        .gauge svg{
+                            -moz-transform: scale(1.0);
+                            margin-top: 0px;
+                        }
+                    }
+					
+				/*Cityscore*/
+					._navbar-cityscore{
+						color: black !important;
+						padding-top: 70px !important;
+						padding-bottom: 2px !important;
+						border-bottom: solid 1px #e4e2f3;			
+					}
+					._navbar-cityscore > p{
+						color: black !important;
+					}
+            }
+        
+        /*Tablets: Screen is greater than 767px and less than 1025px (iPad Landscape)*/
+            @media only screen and (min-width: 768px) and (max-device-width: 1024px){    
+
+                .gauge-row {
+                    height: 165px !important;
+                }
+
+                /*Main Layout*/   
+                    #nav_mobile{
+                        display:none !important;
+                    }
+                    .sidebar{
+                        display: block;
+                    }
+                    .col-md-2{
+                        width: 35% !important;
+                    }
+                    .col-md-10{
+                        width: 65% !important;
+                    } 
+                    .main-column{
+                        height: calc(100vh - 100px);
+                        overflow-y: scroll;
+                    }               
+
+                /*Metric Cards*/
+                    .metric-card{
+                        height: 372px; /*fixed height for a 'grid' look*/
+                        width: calc(100% - 25px) !important;
+                    }
+                    .metric-title{
+                        font-size: 1.3em !important;
+                    }
+                    .metric-diff{
+                        padding-right: 20px;
+                    }
+                    .metric-card-col-2{
+                        padding-left: 20px;
+                    }
+                
+                /*Gauges*/
+                    .gauge{
+                        height: 175px;
+                        margin-left: 3px;
+                    }      
+                    .gauge svg{
+                        zoom: 90%;
+                    }
+                    /*Firefox specific zoom for size of gauge*/
+                    @-moz-document url-prefix() {
+                        .gauge svg{
+                            -moz-transform: scale(0.9);
+                            margin-top: 0px;                    
+                        }
+                    }
+                    /* time period measured and goal side-by-side*/
+                    .metric-metadata-timeperiod,
+                    .metric-metadata-goal {
+                        width: 40%;
+                    }
+            }
+            .metric-metadata-timeperiod-label, .metric-metadata-goal-label, .metric-metadata-timeperiod, .metric-metadata-goal {
+                    /*width: 40%;*/
+                }
+            .side-by-side {
+                display: inline-block;
+                width: 49%;
+            }
+
+        /*Desktops: Screen is greater than 1024px (iPad Landscape)*/
+            @media only screen and (min-width: 1025px){ 
+
+                /*Main Layout*/   
+                    #nav_mobile{
+                        display:none !important;
+                    }
+
+                /*Metric Cards*/
+                    .metric-card{
+                        height: 392px; /*fixed height for a 'grid' look*/
+                        width: 475px;
+                    }
+                    .metric-diff{
+                        padding-right: 20px;
+                    }
+                    .metric-card-col-2{
+                        padding-left: 12px;
+						font-size: 0.8em;
+                    }					
+					.metric-btn-actions{
+						font-size: 0.9em;
+					}
+					
+				/*Gauges*/
+                    .gauge{
+                        height: 175px;
+                        margin-left: -5px;
+                    }      
+                    .gauge svg{
+                        zoom: 90%;
+                    }
+                    /*Firefox specific zoom for size of gauge*/
+                    @-moz-document url-prefix() {
+                        .gauge svg{
+                            -moz-transform: scale(0.9);
+                            margin-top: 0px;                    
+                        }
+                    } 
+
+                /*Modals*/
+                    .modal-dialog {
+                        width: 1200px !important; /* New width for default modal */
+                    } 
+            }
+			#d-purple {
+				color: #5e2590;
+				margin: 0;
+			}
+			#d-purple span {
+				color: black;
+			}
+			#l-purple {
+				color: #a673d4;
+			}
+			#l-purple span {
+				color: black;
+			}
+            .feedback {
+                position: absolute;
+                right: 16px;
+                height: 100%;
+                background-color: #4caf50;
+                top: 0;
+                text-align: center;
+                color: white;
+                line-height: 64px;
+                padding: 0 16px;
+                transition: background-color 0.1s ease-in-out;
+            }
+            .feedback:hover {
+                text-decoration: none;
+                background-color: #449d48;
+                color: white;
+            }
+    
+</style>
+
+<!-- Navbar -->
+<nav class="navbar navbar-default">
+
+    <div class="container-fluid">
+
+        <!--Navbar Header-->
+        <div class="navbar-header">            
+
+            <!--Mobile-Menu Button-->
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav_mobile" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+            </button>
+
+            <!--Site Title - sm to lg-->
+            <a class="nav-site-title-container navbar-brand" href="http://metrics.cityoflewisville.com" target="_self">
+                <img class="hidden-xs nav-city-logo" src="images/citylogo.svg">
+                <h1 class=" hidden-xs nav-site-title">Performance Dashboard <!--<small>BETA</small>--></h1>
+            </a>
+            
+            <!--Site Title - xs-->
+            <img class="visible-xs hidden-sm nav-city-logo-xs" src="images/citylogo.svg">
+            <span class="visible-xs hidden-sm nav-site-title-xs">Performance Dashboard <!-- <small>BETA</small> --></span>
+            
+            <!-- feedback button -->
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfYEnw5sa4dGngKXpja9jhpLLVg6bWSnSAKEmyjX3d38eG5kw/viewform" class="feedback" target="_blank">Feedback</a>
+		</div> <!--/.navbar-header-->
+		
+		<!--Cityscore-->
+		<!--
+        <div class="">
+			<ul class="nav navbar-nav navbar-right">
+				<li style="text-align: center;">
+					<a class="_navbar-cityscore" href=""><small style="font-size:0.6em;">City-Wide Score:</small>  {{vm.cityscore.data.currentscore}}</a>					
+					<p>As of: {{vm.util.ui_DateDifference(vm.cityscore.data.lastupdated)}}</p>
+				</li>
+			</ul>
+		</div>
+		-->
+        <!--Mobile Nav-Menu-->
+        <div id="nav_mobile" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav"  ng-repeat="cat in [{id: 'priority', title: 'Priorities'},{id: 'bigmove', title: 'Big Moves'},{id: 'department', title: 'Departments'}]">
+                <li>{{cat.title}}</li>                    
+                <li ng-repeat="bmpd in vm.categories.categories | filter: {type: cat.id}">
+                    <a href="#" ng-href="#/details/{{cat.id}}/{{bmpd.id}}">
+                        <span class="glyphicon glyphicon-{{bmpd.icon}}"></span>&nbsp {{bmpd.title}}
+                        <span class="sidebar-category-count">{{ ( vm.metrics.count_by_category_type(cat.id, bmpd.id) == 0 ? '' : '['+vm.metrics.count_by_category_type(cat.id, bmpd.id)+']')  }}</span>
+                    </a>
+                </li>
+            </ul> <!--/.nav navbar-nav-->
+			
+        </div> <!-- /Mobile Nav-menu + .navbar-collapse -->
+    </div> <!-- /.container-fluid -->
+	
+	<!--Register New Metric-->
+	<a 
+		href="http://apps.cityoflewisville.com/psofia/default.aspx?formnumber=42" 
+		target="_blank" 
+		style="position:absolute; top: 110px; right: 30px; z-index: 1;" 
+		class="btn btn-warning" 
+		ng-if="vm.editmode==true">
+		<span class="glyphicon glyphicon-plus"></span>&nbsp New
+	</a>
+</nav>
+		
+			
+<!--Body-->
+<div class="row body-row">
+
+    <!--......................................................-->
+    <!--Sidebar-->
+    <!--......................................................-->
+    <div class="col-sm-4 col-md-2 sidebar">
+		
+		<!--All Metrics-->
+		<!--<ul class="sidebar-nav">
+			<li class="sidebar-category-title"></li>
+			<li class="sidebar-category-li">
+				<a class="sidebar-category-link" ng-href="#/details/all/all">
+					All Metrics 
+					<span class="sidebar-category-count">[{{vm.metrics.metrics.length + vm.staticmetrics.metrics.length}}]</span>
+				</a>
+			</li>
+		</ul>-->
+		
+		<!--Metric Categories-->
+        <ul class="sidebar-nav" ng-repeat="cat in [{id: 'department', title: 'Departments'},{id: 'priority', title: 'City Priorities'},{id: 'bigmove', title: 'Big Moves'}]">
+            
+			<!--Main Category-->
+			<li class="sidebar-category-title">{{cat.title}}</li> 
+					
+			<!--Sub-Category-->
+            <li class="sidebar-category-li" ng-repeat="bmpd in vm.categories.categories  | filter: {type: cat.id}">			
+                <a class="sidebar-category-link" href="#" ng-href="#/details/{{cat.id}}/{{bmpd.id}}" ng-click="vm.metrics.setDev( vm.metrics.count_by_category_type(cat.id, bmpd.id) + vm.staticmetrics.count_by_category_type(cat.id, bmpd.id))">
+                    <span class="glyphicon glyphicon-{{bmpd.icon}} sidebar-category-icon"></span>&nbsp {{bmpd.title}}
+                    <span class="sidebar-category-count">{{ ( vm.metrics.count_by_category_type(cat.id, bmpd.id) + vm.staticmetrics.count_by_category_type(cat.id, bmpd.id) == 0 ? '' : '['+ (vm.metrics.count_by_category_type(cat.id, bmpd.id) + vm.staticmetrics.count_by_category_type(cat.id, bmpd.id) ) + ']' ) }}</span>
+					<a href="{{bmpd.editurl}}" target="_blank" style="margin-top: -7px;height: 25px;width: 35px;font-size: 0.9em;padding: 2px;" class="pull-right btn btn-warning" ng-if="vm.editmode==true">Edit</a>
+				</a>
+            </li>
+        </ul>
+    </div>
+    
+    <!--......................................................-->
+    <!--Middle-->
+    <!--......................................................-->
+    <div class="col xs-12 col-sm-8 col-md-10 main-column">
+		<div class="row">
+			<i><small>Data is automatically refreshed every 20 minutes.</small></i>
+			<br>
+			<p id="d-purple">&block;<span> = <i>live data</i></span></p>
+			<p id="l-purple">&block;<span> = <i>static data</i></span></p>
+		</div>
+		
+        <!--Category Title-->
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="category-title">{{vm.categories.filter_by_id(vm.selectedCategory.categoryid)[0].title}}</h2>
+                <div ng-if="vm.categories.hasUrlField(vm.selectedCategory.categoryid)==true">
+                    [See also: 
+                    <a target="_blank" href="{{vm.categories.filter_by_id(vm.selectedCategory.categoryid)[0].url}}">{{vm.categories.filter_by_id(vm.selectedCategory.categoryid)[0].urlmask}}</a>]
+                </div>
+            </div>
+        </div>		
+		
+        <!--Query-Based Metrics: Cards-->
+        <div class="row">
+			
+			<!--Loading indicator-->
+			<div 
+				class="col-md-12" 
+				style="font-size:2em; height: 300px; display: flex;justify-content: center;align-items: center;"
+				ng-if="vm.metrics.filter_by_category_type(vm.selectedCategory.type,vm.selectedCategory.categoryid) < 1 && vm.metrics.checkDev() == false"
+				>Loading...
+			</div>
+
+            <div
+                id="indev"
+                class="col-md-12"
+                style="font-size:2em; height: 300px; display: flex;justify-content: center;align-items: center;"
+                ng-if="vm.metrics.checkDev()"
+                >Metrics under development
+            </div>
+
+            <!--|=========================|-->
+            <!--|         Title           |-->
+            <!--|=========================|-->
+            <!--| COLUMN 1 | COLUMN 2     |-->
+            <!--| Gauge    | Meta         |-->
+            <!--|==========|              |-->
+            <!--| Btns     |              |-->
+            <!--|=========================|-->
+
+            <div ng-repeat="pm in vm.metrics.filter_by_category_type(vm.selectedCategory.type,vm.selectedCategory.categoryid) | orderBy: 'metrictype'" 
+                 class="col-lg-3 metric-card">
+                
+                <!--Metric Title-->
+                <div class="row metric-title" ng-class="{ 'lightenUp' : pm.metrictype.toLowerCase() != 'query' }">
+					{{pm.metricname}} 
+					<!-- <span class="metric-title-metric-type">{{(pm.metrictype.toLowerCase()=='query' ? 'Live Data' : 'Static Data')}} -->
+					</span>
+					<a href="{{pm.editurl}}" target="_blank" class="metric-title-edit-button btn btn-warning" ng-if="vm.editmode==true">Edit</a>
+				</div>
+                
+                <div class="row">
+
+                    <!--Column 1-->
+                    <div class="metric-card-col-1 col-xs-12 col-sm-5 col-md-5" >
+
+                        <!--Difference from yesterday-->
+                        <div class="metric-diff row">
+                            <span 
+								class="metric-diff-symbol" 
+								ng-style="pm.diff_color"
+								ng-if="pm.metrictype.toLowerCase() == 'query'"
+								>{{pm.diff_symbol}}
+							</span>
+                            <span 
+								class="metric-diff-symbol" 
+								ng-style="pm.diff_color"
+								ng-if="pm.metrictype.toLowerCase() == 'query'"
+								>{{pm.diff_value}}
+							</span>
+                            <span 
+								class="metric-diff-text"
+								ng-if="pm.metrictype.toLowerCase() == 'query'"
+								>vs yesterday
+							</span>
+                        </div>
+
+                        <!--Gauge via ng-chart.js-->
+                        <div 
+							ng-if="(pm.metrictype.toLowerCase() == 'query' || (pm.metrictype.toLowerCase() == 'static' && pm.staticsymbol.toLowerCase() == 'gauge')) && pm.gaugedataformat.toLowerCase() == 'percent'"
+                            class="gauge row gauge-row" 
+                            google-chart 
+                            chart="vm.charts.gauges.objects.gauge_{{pm.id}}">
+                        </div>
+
+                        <!-- replace gauge with number if 'integer' -->
+                        <div
+                            ng-if="(pm.metrictype.toLowerCase() == 'query' || (pm.metrictype.toLowerCase() == 'static' && pm.staticsymbol.toLowerCase() == 'gauge')) && pm.gaugedataformat.toLowerCase() == 'integer'"
+                            class="integer row gauge-row"
+                            ng-attr-id="{{ 'int_' + pm.id }}"
+                        >{{ pm.gaugedata[0].value }}
+                        </div>
+						
+						<!--Static-Metric Symbol or Text-->
+						<div
+							ng-if="pm.metrictype.toLowerCase() == 'static' && pm.staticsymbol.toLowerCase() != 'gauge'"
+							class="gauge row gauge-row static-metric-value"
+                            ng-class="{ 'shrink' : vm.util.shrink(pm.statictext) }">
+							<div>
+								<span ng-if="pm.staticsymbol.toLowerCase() == 'icon'" class="glyphicon glyphicon-{{pm.staticicon}}"></span>
+								<span ng-if="pm.staticsymbol.toLowerCase() == 'text'" class="static-metric-value">{{pm.statictext}}</span>
+							</div>
+						</div>
+                        
+                        <!--Current Count (for percent metrics)-->
+                        <div class="metric-current-count row">{{vm.util.metric_current_count(pm)}}</div>
+
+                        <!--Button: Line Chart-->
+                        <div class="metric-btn-wrapper row">
+                            <button 
+                                class="btn btn-default metric-btn-actions"
+                                data-toggle="modal"
+                                data-target="#modalLineChart"
+                                ng-click="vm.currentmetricindex = pm.id; vm.charts.linecharts.create(pm.id);"
+                                ng-disabled="(pm.data.length==0)"
+								ng-if="pm.metrictype.toLowerCase() == 'query'"
+                                >
+                                <span class="glyphicon glyphicon-signal" aria-hidden="true"></span> &nbsp History Graph
+                            </button>
+                        </div>
+                        
+                        <!--Button: Table-->
+                        <div class="metric-btn-wrapper row">
+                            <button 
+                                class="btn btn-default metric-btn-actions"
+                                data-toggle="modal"
+                                data-target="#modalTable"
+                                ng-click="vm.currentmetricindex = pm.id; vm.charts.tables.create(pm.id);"
+                                ng-disabled="pm.detailsurl == ''"
+								ng-if="pm.metrictype.toLowerCase() == 'query'"
+                                >
+                                <span class="glyphicon glyphicon-list" aria-hidden="true"></span> &nbsp Detail Table
+                            </button>
+                        </div>
+
+                        <!--Button: In-Depth Analysis: Only show if there is data in the pm.url field-->
+                        <div class="metric-btn-wrapper row" ng-if="vm.metrics.hasUrlField(pm.id)==true">
+                            <a 
+                                class="btn btn-primary metric-btn-actions"
+                                href="{{pm.url}}"
+                                target="_blank"
+                                ng-disabled="(pm.data.length==0)"
+                                >
+                                <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> &nbsp {{(pm.urllabel.length > 1 ? pm.urllabel : "In-Depth Analysis")}}
+                            </a>
+                        </div>
+                    </div> <!--end col-->
+
+                    <!--Column 2-->
+                    <div class="metric-card-col-2 col-xs-12 col-sm-7 col-md-7">
+
+                        <div class="row metric-metadata-row">
+                            <h4 class="metric-metadata-label">Department:</h4>                                        
+                            <div class="metric-metadata-description">{{vm.categories.filter_by_id(pm.category1)[0].title}}</div>
+
+                            <h4 class="metric-metadata-label">Description:</h4>                                        
+                            <div class="metric-metadata-description">{{pm.metricdescription}}</div>
+							
+                            <div class="side-by-side">
+                                <h4 class="metric-metadata-label metric-metadata-goal-label">Goal:</h4>
+                                <div class="metric-metadata-goal">{{pm.metricgoal}}
+                                    <span ng-if="vm.ui_NotMeetingGoal($index)===false" class="notmeetinggoal">&nbsp (Needs Improvement)</span>
+                                </div>
+                            </div>
+                            
+                            <div class="side-by-side">
+                                <h4 class="metric-metadata-label metric-metadata-timeperiod-label" ng-if="pm.timeperiod">Time Period Measured:</h4>
+                                <div class="metric-metadata-timeperiod">{{pm.timeperiod}}
+                                    <span ng-if="vm.ui_NotMeetingGoal($index)===false" ng-if="pm.timeperiod" class="notmeetinggoal">&nbsp (Needs Improvement)</span>
+                                </div>
+                            </div>
+
+                            <h4 class="metric-metadata-label">Data Source:</h4>
+                            <div class="metric-metadata-datasource">{{pm.realtimedsdescription}}</div>
+                            
+                            <h4 class="metric-metadata-label" ng-if="pm.hidelastrefreshed != 'true'">Last Refreshed:</h4>
+                            <div 
+								ng-if="(pm.metrictype.toLowerCase() == 'query' || (pm.metrictype.toLowerCase() == 'static' && pm.staticsymbol.toLowerCase() == 'gauge')) && pm.hidelastrefreshed != 'true'"
+								class="metric-metadata-lastrefreshed"
+								>As of: {{vm.util.ui_DateDifference(pm.gaugedata[0].lastimported)}}<br>{{pm.gaugedata[0].lastimported}}
+							</div>
+							<div 
+								ng-if="(pm.metrictype.toLowerCase() == 'static' && pm.staticsymbol.toLowerCase() != 'gauge') && pm.hidelastrefreshed != 'true'"
+								class="metric-metadata-lastrefreshed"
+								>As of: {{vm.util.ui_DateDifference(pm.psofia_finallastediteddate)}}<br>{{pm.psofia_finallastediteddate}}
+							</div>
+                        </div><!--end .row--> 
+
+                    </div> <!--end col-->
+
+                </div><!--end .row--> 
+                
+            </div><!--end ng-repeat--> 
+        </div><!--end .row--> 
+    </div><!--end .col--> 
+</div><!--end .row--> 
+                
+
+<!--......................................................-->
+<!--Modal: Line Chart-->  
+<!--......................................................-->
+<div class="modal" id="modalLineChart" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        
+            <!--Header-->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">{{vm.metrics.filter_by_id(vm.currentmetricindex)[0].metricname}}</h4>
+                <small>Historical</small>
+            </div>
+            
+            <!--Body-->
+            <div class="modal-body">
+                
+                <!--Google Chart via ng-chart.js-->
+                <div 
+                    class="linechart" 
+                    google-chart 
+                    chart="vm.charts.linecharts.objects.linechart_{{vm.currentmetricindex}}">
+                        <span class="modal-data-loading-message">Loading...</span>
+                </div>
+
+                <div><!--Replaced href with new web service to agg data. used to point to vm.realtimeurl -->
+                    <a  ng-href="http://eservices.cityoflewisville.com/citydata?datasetid=MetricsGetDetailsOrAvg&detoravg=agg&uspname={{vm.metrics.filter_by_id(vm.currentmetricindex)[0].uspname}}&datasetformat=csv"
+                        class="btn btn-default"
+                        target="_blank">
+                        <span class="glyphicon glyphicon-save" aria-hidden="true"></span> &nbsp Download as CSV
+                    </a>
+                </div>
+            </div> <!-- /.modal-body -->
+                
+            <!--Footer-->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div><!-- /.modal-footer -->
+            
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<!--......................................................-->
+<!--Modal: Tables-->  
+<!--......................................................-->
+<div class="modal" id="modalTable" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        
+            <!--Header-->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">{{vm.metrics.filter_by_id(vm.currentmetricindex)[0].metricname}}</h4>
+                <small>Specific data that was used to calculate the metric</small>
+            </div>
+            
+            <!--Body-->
+            <div class="modal-body">
+                
+                <!--Google Chart via ng-chart.js-->
+                <div 
+                    class="goog-table" 
+                    google-chart 
+                    chart="vm.charts.tables.objects.table_{{vm.currentmetricindex}}"
+					ng-if="vm.charts.tables.isloading==false">
+                </div>
+				<span 
+					class="modal-data-loading-message"
+					ng-if="vm.charts.tables.isloading==true"
+				>Loading...
+				</span>
+            </div> <!-- /.modal-body -->
+                
+            <!--Footer   replaced href with new web service. used to point to detailsurl -->
+            <div class="modal-footer">
+                <a  ng-href="http://eservices.cityoflewisville.com/citydata?datasetid=MetricsGetDetailsOrAvg&detoravg=details&uspname={{vm.metrics.filter_by_id(vm.currentmetricindex)[0].uspname}}&datasetformat=csv"
+                    class="btn btn-default"
+                    target="_blank">
+                    <span class="glyphicon glyphicon-save" aria-hidden="true"></span> &nbsp Download CSV
+                </a>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp Close</button>
+            </div><!-- /.modal-footer -->
+            
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+

@@ -1,0 +1,15 @@
+{
+  "name": "Metrics Dashboard",
+  "short_name": "Metrics",
+  "description": "City of Lewisville metrics dashboard.",
+  "start_url": "index.html?utm_source=homescreen",
+  "background_color": "#5d2490",
+  "theme_color": "#5d2490",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "./icons/pmartin.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    }]
+}

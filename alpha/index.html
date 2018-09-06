@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>COL Metrics - Home</title>
+    <link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyDARduaVDhGG5z3_D54raucZWFABj2PFvE&libraries=places,drawing"></script>
+    <!-- JQuery -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Product+Sans:100,100i, 200,200i, 300,300i, 400,400i,700,700i" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.1/css/materialize.min.css">
+    <link rel="stylesheet" src="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.1/js/materialize.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="./chart.js/Chart.js"></script>
+    <!-- <script type="text/javascript" src="./chart.js/Chart.js"></script> -->
+
+    <!-- Materialize JS (production / minified) -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.5/bluebird.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <header>
+            <div class="navbar-fixed">
+                <nav>
+                    <div class="nav-wrapper indigo lighten-1">
+                        <div class="logo"></div>
+                        <a data-target="mobile-demo" class="sidenav-trigger pointy"><i class="material-icons">menu</i></a>
+                        <a class="brand-logo">Metrics <span>City of Lewisville, Tx</span></a>
+                        <ul class="right hide-on-med-and-down">
+                            <li>
+                                <div class="dual-links">
+                                    <a :href="urls.stats" target="_blank">Stats</a>
+                                    <!-- |
+                                    <a :href="urls.data" target="_blank">Data</a></div> -->
+                            </li>
+                            <li>
+                                <a class="btn amber grey-text text-darken-2" :href="urls.metrics" target="_blank">metrics dashboard</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <ul class="sidenav" id="mobile-demo">
+            <li><a class="btn amber grey-text text-darken-2" :href="urls.metrics" target="_blank">metrics dashboard</a></li>
+            <li><a :href="urls.stats" target="_blank">Stats</a></li>
+            <!-- <li><a :href="urls.data" target="_blank">Data</a></li> -->
+        </ul>
+
+        <main>
+            <div class="parallax-container valign-wrapper">
+                <div>
+                    <h2>Performance Metrics</h2>
+                    <p>
+                        Welcome to the City of Lewisville's Performance Metrics portal where we show you live data to determine if we are providing the level of service expected by our residents.
+                    </p>
+                </div>
+                <div class="parallax">
+                    <img src="assets/cartoon2.png">
+                </div>
+            </div>
+
+            <!-- city priority links -->
+            <div class="section grey lighten-4">
+                <div class="row ">
+                    <div class="col s12 center-align">
+                        <h3 class="header grey-text text-darken-2">Categories</h3>
+                        <p class="sub-header">View all metrics for a specific category by choosing an option below.</p>
+                        <br>
+                    </div>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col s12 m4 l4 dept-link center-align" v-for="(cp, idx) in citypriorities" :class="{ 'offsetx-l2' : idx%4==0 }">
+                                <a class="indigo-text" target="_blank" :href="extLink + prettyName(cp.bmpdisplayname)">{{ cp.bmpdisplayname }}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- public safety -->
+            <div id="details-modal" class="modal modal-fixed-footer">
+                <div class="modal-title white">
+                    <h5>{{ modalDetails }} Call Details</h5>
+                </div>
+                <div class="modal-content">
+                    <div class="table-holder">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Call Number</th>
+                                    <th>Complaint</th>
+                                    <th>Call Received</th>
+                                    <th>Arrived On Scene</th>
+                                    <th>Response Time (minutes)</th>
+                                </tr>
+                            </thead>
+                            <tbody v-if="modalDetails == 'Police'">
+                                <tr v-for="call in data.raw_Police">
+                                    <td>{{ call.Call_Number }}</td>
+                                    <td>{{ call.Complaint }}</td>
+                                    <td>{{ call.Date_Received }}</td>
+                                    <td>{{ call.OnScene }}</td>
+                                    <td>{{ call.Response_Time ? call.Response_Time.toFixed(2) : call.Response_Time }}</td>
+                                </tr>
+                            </tbody>
+                            <tbody v-else-if="modalDetails == 'Fire'">
+                                <tr v-for="call in data.raw_Fire">
+                                    <td>{{ call.Call_Number }}</td>
+                                    <td>{{ call.Complaint }}</td>
+                                    <td>{{ call.Date_Received }}</td>
+                                    <td>{{ call.OnScene }}</td>
+                                    <td>{{ call.Response_Time.toFixed(2) }}</td>
+                                </tr>
+                            </tbody>
+                            <tbody v-else-if="modalDetails == 'EMS'">
+                                <tr v-for="call in data.raw_EMS">
+                                    <td>{{ call.Call_Number }}</td>
+                                    <td>{{ call.Complaint }}</td>
+                                    <td>{{ call.Date_Received }}</td>
+                                    <td>{{ call.OnScene }}</td>
+                                    <td>{{ call.Response_Time.toFixed(2) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a class="modal-close waves-effect btn-flat">Done</a>
+                </div>
+            </div>
+
+            <div class="section white">
+                <div class="row">
+                    <div class="col s12 center-align">
+                        <h3 class="header grey-text text-darken-2">Public Safety</h3>
+                        <p class="sub-header">The city's top priority is the safety of the public. Safety takes many forms including police, fire and EMS, plus health inspections, water quality (Lewisville treats and distributes its own water) and sewage treatment.</p>
+                        <br>
+                    </div>
+                    <div class="col s12 l8 offset-l2 xl4">
+                        <div class="center-align">
+                            <h4>Police</h4>
+                            <span>Response Time</span>
+                        </div>
+                        <div class="card blue-grey">
+                            <div class="card-content">
+                                <div class="chart-placeholder valign-wrapper center-align" v-if="isLoading.responsetimes == true">
+                                    <div class="spinner">
+                                        <div class="double-bounce1"></div>
+                                        <div class="double-bounce2"></div>
+                                    </div>
+                                </div>
+                                <!-- <div id="ps-line1" class="area-chart white-text" v-else>AREA CHART</div> -->
+                                <canvas class="cvs area-chart" id="ps-line1" v-else></canvas>
+                                <small class="grey-text text-lighten-2"><i>Past 30 days</i></small>
+                            </div>
+                            <div class="card-content">
+                                <span class="grey-text text-lighten-2 pointy">
+                                    <a class="white-text" @click="openModal('#details-modal', 'Police')">View details...</a>
+                                    <i class="activator material-icons right">info</i>
+                                </span>
+                            </div>
+                            <div class="card-reveal blue-grey lighten-3">
+                                <span class="card-title grey-text text-darken-4">Metric Description<i class="material-icons right">close</i></span>
+                                <p class="left-align">
+                                    Police department response time to priority 1 (the highest priority) calls (Major Accident, Unconscious Person, Aggravated Assault, Burglary of a Building) compared to the number of priority 1 calls. The city's goal is to have the first police officer arrive at a priority 1 call within 8 minutes of the call being received.  Priority 1 calls will typically receive a response of 2 officers.  Because these types of calls require more resources (police officers), an increase in the number of these (at the same time) will strain the department's ability to meet the response time goals to other calls.
+                                </p>
+                            </div>
+                            <div class="goals-box blue-grey darken-3 white-text">
+                                <p>Goal:</p>
+                                <p>8 mins or less</p>
+                            </div>
+                        </div>
+                        <span class="grey-text">Last updated: {{ lastUpdated.police }}</span>
+                    </div>
+                    <div class="col s12 l8 offset-l2 xl4">
+                        <div class="center-align">
+                            <h4>Fire</h4>
+                            <span>Response Time</span>
+                        </div>
+                        <div class="card blue-grey">
+                            <div class="card-content">
+                                <div class="chart-placeholder valign-wrapper center-align" v-if="isLoading.responsetimes == true">
+                                    <div class="spinner">
+                                        <div class="double-bounce1"></div>
+                                        <div class="double-bounce2"></div>
+                                    </div>
+                                </div>
+                                <!-- <div id="ps-line2" class="area-chart white-text" v-else>AREA CHART</div> -->
+                                <canvas class="cvs area-chart" id="ps-line2" v-else></canvas>
+                                <small class="grey-text text-lighten-2"><i>Past 30 days</i></small>
+                            </div>
+                            <div class="card-content">
+                                <span class="grey-text text-lighten-2 pointy">
+                                    <a class="white-text" @click="openModal('#details-modal', 'Fire')">View details...</a>
+                                    <i class="activator material-icons right">info</i>
+                                </span>
+                            </div>
+                            <div class="card-reveal blue-grey lighten-3">
+                                <span class="card-title grey-text text-darken-4">Metric Description<i class="material-icons right">close</i></span>
+                                <p class="left-align">
+                                    Fire department response time to priority 1 (the highest priority) calls (Major Accident, Fire, Gas Leak, Breathing Problem) compared to the number of priority 1 calls. The city's goal is to have the first fire personnel arrive at a priority 1 call within 7 minutes of the call being received. Minimum response includes one Engine containing 3 fire personnel, or one Medic containing 2 fire personnel, or both Engine and Medic in some cases. All Lewisville Fire Department emergency personnel also certify as paramedics.  That way, no matter which unit (fire engine, ambulance, etc) arrives, medical care begins immediately upon arrival. Because these types of calls often require more resources (firemen, fire engines, ambulances), an increase in the number of these types of calls at the same time will strain the department's ability to meet the response time goals to other calls.  Lewisville Fire Department requests assistance from surrounding cities when needed (Mutual Aid Agreement). We also provide assistance to those cities when requested.
+                                </p>
+                            </div>
+                            <div class="goals-box blue-grey darken-3 white-text">
+                                <p>Goal:</p>
+                                <p>8 mins or less</p>
+                            </div>
+                        </div>
+                        <span class="grey-text">Last updated: {{ lastUpdated.fire }}</span>
+                    </div>
+                    <div class="col s12 l8 offset-l2 xl4">
+                        <div class="center-align">
+                            <h4>EMS</h4>
+                            <span>Response Time</span>
+                        </div>
+                        <div class="card blue-grey">
+                            <div class="card-content">
+                                <div class="chart-placeholder valign-wrapper center-align" v-if="isLoading.responsetimes == true">
+                                    <div class="spinner">
+                                        <div class="double-bounce1"></div>
+                                        <div class="double-bounce2"></div>
+                                    </div>
+                                </div>
+                                <!-- <div id="ps-line3" class="area-chart white-text" v-else>AREA CHART</div> -->
+                                <canvas class="cvs area-chart" id="ps-line3" v-else></canvas>
+                                <small class="grey-text text-lighten-2"><i>Past 30 days</i></small>
+                            </div>
+                            <div class="card-content">
+                                <span class="grey-text text-lighten-2 pointy">
+                                    <a class="white-text" @click="openModal('#details-modal', 'EMS')">View details...</a>
+                                    <i class="activator material-icons right">info</i>
+                                </span>
+                            </div>
+                            <div class="card-reveal blue-grey lighten-3">
+                                <span class="card-title grey-text text-darken-4">Metric Description<i class="material-icons right">close</i></span>
+                                <p class="left-align">
+                                    Fire department response time to priority 1  (the highest priority) Medical Calls  (Medical Emergency, Chest Pain, Hemorrhage, Traumatic Injury) compared to the number of priority 1 calls. The city's goal is to have the first EMS personnel arrive at a priority 1 call within 7 minutes of the call being received. Minimum response includes one Medic containing 2 fire personnel, or both Engine and Medic in some cases. All Lewisville Fire Department emergency personnel also certify as paramedics.  That way, no matter which unit (fire engine, ambulance, etc) arrives, medical care begins immediately upon arrival. Because these types of calls often require more resources (paramedics, fire engines, ambulances), an increase in the number of these types of calls at the same time will strain the department's ability to meet the response time goals to other calls.  Lewisville Fire Department requests assistance from surrounding cities when needed (Mutual Aid Agreement). We also provide assistance to those cities when requested.
+                                </p>
+                            </div>
+                            <div class="goals-box blue-grey darken-3 white-text">
+                                <p>Goal:</p>
+                                <p>8 mins or less</p>
+                            </div>
+                        </div>
+                        <span class="grey-text">Last updated: {{ lastUpdated.ems }}</span>
+                    </div>
+                    <div class="spacer">&nbsp;</div>
+                    <div class="row center-align">
+                        <div class="col s12 center-align">
+                            <h4>Health Inspections</h4>
+                            <span>Scores</span>
+                        </div>
+                        <!-- <div>
+                            <iframe src="http://eservices.cityoflewisville.com/healthinspectionscores?embed=true" width="100%" height="550"></iframe>
+                        </div> -->
+                        <div class="col s12 xl8 left-align">
+                            <div class="map-placeholder card grey lighten-3 valign-wrapper center-align" v-if="isLoading.financehealth == true">
+                                <div class="spinner">
+                                    <div class="double-bounce1"></div>
+                                    <div class="double-bounce2"></div>
+                                </div>
+                            </div>
+                            <div class="card mapview brown" id="health-map" v-else></div>
+                            <span class="grey-text">Last updated: {{ lastUpdated.health }}</span>
+                        </div>
+                        <div class="col s12 xl4">
+                            <div class="card health-list">
+                                <div class="health-placeholder grey lighten-4 valign-wrapper center-align" v-if="isLoading.financehealth == true">
+                                    <div class="spinner">
+                                        <div class="double-bounce1"></div>
+                                        <div class="double-bounce2"></div>
+                                    </div>
+                                </div>
+                                <ul class="collection" v-else>
+                                    <li class="collection-item avatar left-align" v-for="insp in data.healthInspections">
+                                        <!-- <img src="./assets/pmartin.svg" alt="" class="circle grey"> -->
+                                        <div class="circle grey darken-2 center-align">
+                                            <div class="health-score">{{ insp.Score }}</div>
+                                        </div>
+                                        <span class="title">{{ insp.BusinessName }}</span>
+                                        <p class="grey-text">{{ prettyDate(insp.InspectionDate, "MM-DD-YYYY") }}</p>
+                                        <a :href="'https://www.google.com/maps/dir/?api=1&destination=' + urlEncodeAddress(insp.BusinessAddress)"
+                                            class="secondary-content"
+                                            target="_blank">
+                                            <i class="material-icons dir green-text text-darken-3">directions</i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col s12 center-align streets-desc sub-header">
+                            <div class="container">
+                                <p class="left-align">
+                                    Food safety is a vital aspect of public safety. The city's four health inspectors are responsible for inspecting over 500 food service establishments. Each food establishment receives two to three inspections per year. The health score scale is from 0 to 100. A score of 70 or above is considered passing. The inspection criteria and inspection scoring are set by the Texas Food Establishment Rules. There are 20 priority items, which are considered the primary causes of foodbourne illness, that inspectors focus on. These item can cause a food service establishment to receive a non-passing score. These violations can include things such as:
+                                    <ul class="left-align browser-default">
+                                        <li>Improper Cooling</li>
+                                        <li>Improper Hand Washing</li>
+                                        <li>Improper Reheating</li>
+                                        <li>Improper Hot and Cold Holding of Foods</li>
+                                        <li>Unsanitary Conditions</li>
+                                    </ul>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- neighborhood -->
+            <div class="section grey lighten-4">
+                <div class="row">
+                    <div class="col s12 center-align">
+                        <h3 class="header grey-text text-darken-2">Keeping Neighborhoods Maintained</h3>
+                        <p class="sub-header">A quality city has a look and feel that makes you want to live there and do business there.  In Lewisville, we measure our ability to efficiently fix street problems, sidewalk issues and enforce codes.</p>
+                        <br>
+                    </div>
+                    <div class="row container">
+                        <div class="col s12 l8 xl6 offset-l2">
+                            <div class="center-align">
+                                <h4>Code Enforcement</h4>
+                                <span>Compliance</span>
+                            </div>
+                            <div class="card">
+                                <div class="card-content">
+                                    <div class="card-title center-align grey-text text-darken-2">
+                                        Code Violator Clearance Rate
+                                        <div class="card-value center-align black-text" v-if="!isLoading.codeenforcement">{{ prettyNum(data.code1.value) }}%</div>
+                                    </div>
+                                    <div class="card-desc">
+                                        The value above represents the percent of code enforcement cases that were opened and complied-with over the past 30 days. A higher percentage indicates that Code Enforcement Officers are able to gain compliance with city codes relatively quickly from the time they were identified. A lower percentage means that violations remain on properties for longer periods of time.
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="grey-text">Last updated: {{ lastUpdated.code1 }}</span>
+                        </div>
+                        <div class="col s12 l8 xl6 offset-l2">
+                            <div class="center-align">
+                                <h4>Code Enforcement</h4>
+                                <span>Initiation</span>
+                            </div>
+                            <div class="card">
+                                <div class="card-content">
+                                    <div class="card-title center-align grey-text text-darken-2">
+                                        Officer-Initiated Cases
+                                        <div class="card-value center-align black-text" v-if="!isLoading.codeenforcement">{{ prettyNum(data.code2.value) }}%</div>
+                                    </div>
+                                    <div class="card-desc">
+                                        Similar to the police department, Code Enforcement Officers patrol the city looking for city ordinance violations.  Residents also report violations to the city.  The metric above represents the percent of cases that are initiated by a code officer vs a complaint from a resident.
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="grey-text">Last updated: {{ lastUpdated.code2 }}</span>
+                        </div>
+                    </div>
+                    <div class="col s12 l8 offset-l2 xl4 metric-card">
+                        <div class="center-align">
+                            <h4>Potholes</h4>
+                            <span>Repair Times</span>
+                        </div>
+                        <div class="card blue-grey">
+                            <div class="card-content">
+                                <div class="chart-placeholder valign-wrapper center-align" v-if="isLoading.streets == true">
+                                    <div class="spinner">
+                                        <div class="double-bounce1"></div>
+                                        <div class="double-bounce2"></div>
+                                    </div>
+                                </div>
+                                <!-- <div id="knm-line1" class="area-chart white-text" v-else></div> -->
+                                <canvas class="cvs area-chart" id="knm-line1" v-else></canvas>
+                                <small class="grey-text text-lighten-2"><i>Past 30 days</i></small>
+                            </div>
+                            <div class="card-content">
+                                <span class="grey-text text-lighten-2 pointy">
+                                    &nbsp;
+                                    <i class="activator material-icons right">info</i>
+                                </span>
+                            </div>
+                            <div class="card-reveal blue-grey lighten-3">
+                                <span class="card-title grey-text text-darken-4">Metric Description<i class="material-icons right">close</i></span>
+                                <p class="left-align">
+                                    Damage and breakdown to the City's street surfaces (potholes) result from a variety of causes [e.g., weather, traffic (volume, weight of vehicles), prior street cuts, age]. The repairs needed to correct the breakdown and/or damage to street surfaces vary depending on the nature of the problem. This metric measures the number of pothole repair requests as well as the time it takes the City to repair the pothole once a request is made.
+                                </p>
+                            </div>
+                            <div class="goals-box blue-grey darken-3 white-text">
+                                <p>Goal:</p>
+                                <p>2 days or less</p>
+                            </div>
+                        </div>
+                        <span class="grey-text">Last updated: {{ lastUpdated.streets1 }}</span>
+                    </div>
+                    <div class="col s12 xl8">
+                        <div class="center-align">
+                            <h4>Street / Sidewalk Repairs</h4>
+                            <span>Statuses</span>
+                        </div>
+                        <div class="map-placeholder card grey lighten-3 valign-wrapper center-align" v-if="isLoading.streets == true">
+                            <div class="spinner">
+                                <div class="double-bounce1"></div>
+                                <div class="double-bounce2"></div>
+                            </div>
+                        </div>
+                        <div class="card mapview brown" id="streets-map" v-else></div>
+                        <span class="grey-text">Last updated: {{ lastUpdated.streets2 }}</span>
+                        <div class="center-align">
+                            <div class="left-align marker-holder">
+                                <img src="assets/markers/red-dot.png" /> = work order repair time exceeded goal
+                                <img src="assets/markers/green-dot.png" /> = work order repair time met goal<br>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col s12 center-align streets-desc sub-header">
+                        <div class="container">
+                            <p class="left-align">
+                                <!-- <img src="assets/markers/red-dot.png" /> = work order repair time exceeded goal<br>
+                                <img src="assets/markers/green-dot.png" /> = work order repair time met goal<br> -->
+                                <!-- <img src="assets/markers/grey-dot.png" /> = work order closed with no completion date<br> -->
+                                <br>
+                                Street and sidewalk issues are reported by residents and city staff. The map above shows street and sidewalk service requests that were reported in the past 60 days. They are colored based on whether they were addressed within the goal time.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- finance section -->
+            <div class="section grey lighten-3">
+                <div class="row container">
+                    <div class="col s12 center-align">
+                        <h3 class="header grey-text text-darken-2">Financial Health</h3>
+                        <p class="sub-header">
+                            Lewisville offers high-quality municipal services to its residents and business community, while maintaining a balanced budget, healthy reserve fund, and one of the lowest combined tax rates in North Texas.
+                        </p>
+                        <br>
+                    </div>
+                    <div class="row container">
+                        <div class="col s12 l8 xl6 offset-l2">
+                            <!-- <div class="center-align">
+                                <h4>General Bong</h4>
+                                <span>Rating</span>
+                            </div> -->
+                            <div class="card">
+                                <div class="card-content">
+                                    <div class="card-title center-align grey-text text-darken-2">
+                                        General Bond Rating
+                                        <div class="card-value center-align black-text">{{ 'AAA' }}</div>
+                                    </div>
+                                    <div class="card-desc">
+                                        General Obligation Bond Rating received from Standard and Poor's and Fitch rating agencies.
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <span class="grey-text">Last updated: {{ lastUpdated.code1 }}</span> -->
+                        </div>
+                        <div class="col s12 l8 xl6 offset-l2">
+                            <!-- <div class="center-align">
+                                <h4>Code Enforcement</h4>
+                                <span>Initiation</span>
+                            </div> -->
+                            <div class="card">
+                                <div class="card-content">
+                                    <div class="card-title center-align grey-text text-darken-2">
+                                        Revenue Bond Rating
+                                        <div class="card-value center-align black-text">{{ 'AAA' }}</div>
+                                    </div>
+                                    <div class="card-desc">
+                                        Revenue Bond Rating received from Standard and Poor's and Fitch rating agencies.
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <span class="grey-text">Last updated: {{ lastUpdated.code2 }}</span> -->
+                        </div>
+                        <div class="spacer">&nbsp;</div>
+                        <div class="center-align">
+                            <h4>Property Value Change in Old Town</h4>
+                            <span>Since 2003</span>
+                        </div>
+                        <div class="col s12 card blue-grey ext-chart">
+                            <div class="chart-placeholder valign-wrapper center-align" v-if="isLoading.financehealth == true">
+                                <div class="spinner">
+                                    <div class="double-bounce1"></div>
+                                    <div class="double-bounce2"></div>
+                                </div>
+                            </div>
+                            <!-- <div id="tif-chart" v-else></div> -->
+                            <canvas id="tif-chart" class="cvs" v-else></canvas>
+                        </div>
+                        <div class="col s12">
+                            The above bar chart details TIRZ (tax increment reinvestment zone) revenues for Old Town since 2003.
+                        </div>
+                        <div class="small-spacer">&nbsp;</div>
+                        <div class="center-align">
+                            <h4>Sales Tax Collection</h4>
+                            <span>10 Yr Trend</span>
+                        </div>
+                        <div class="col s12 card blue-grey ext-chart">
+                            <div class="chart-placeholder valign-wrapper center-align" v-if="isLoading.financehealth == true">
+                                <div class="spinner">
+                                    <div class="double-bounce1"></div>
+                                    <div class="double-bounce2"></div>
+                                </div>
+                            </div>
+                            <!-- <div id="finance-chart" v-else></div> -->
+                            <canvas id="finance-chart" class="cvs" v-else></canvas>
+                        </div>
+                        <div class="col s12">
+                            The above line chart shows the amount the city of Lewisville collects each month in sales tax since {{ (new Date().getMonth() >= 9) ? new Date().getFullYear() - 9 : new Date().getFullYear() - 10 }}. This only includes completed fiscal years. For the current fiscal year, see the <a target="_blank" :href="extLink + 'finance/DFC5D0BAA6E0473CACFECF07DF39F550'">Sales Tax Collection metric</a>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- department links -->
+            <div class="section grey lighten-4">
+                <div class="row container">
+                    <div class="col s12 center-align">
+                        <h3 class="header grey-text text-darken-2">All Departments</h3>
+                        <p class="sub-header">View all metrics for a specific department by choosing one below.</p>
+                        <br>
+                    </div>
+                    <div class="col s12 m6 l4 xl3 dept-link center-align" v-for="(dept, idx) in departments"
+                        :class="{ 'offset-xl3': idx == departments.length-2 }">
+                        <a class="indigo-text" target="_blank" :href="extLink /*+ 'department/'*/ + prettyName(dept.bmpdisplayname)">{{ dept.bmpdisplayname }}</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div class="spinner" v-if="false">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+        </div>
+
+        <footer class="page-footer indigo lighten-1">
+            <div class="container">
+                <div class="row">
+                    <div class="col l6 s12">
+                        <h5 class="white-text">
+                            <a href="http://www.cityoflewisville.com" class="white-text underlined">
+                                City of Lewisville Homepage
+                            </a>
+                        </h5>
+                        <p class="grey-text text-lighten-4">
+                            City of Lewisville selected as "What Works City" in March 2017.
+                            <a class="white-text underlined" href="https://whatworkscities.bloomberg.org/cities/">
+                                https://whatworkscities.bloomberg.org/cities/
+                            </a>
+                        </p>
+                    </div>
+                    <div class="col l6 s12">
+                        <h5 class="white-text">Other Links</h5>
+                        <ul class="row">
+                            <li class="col s12 m6 l12 xl6">
+                                <a class="white-text underlined" href="https://library.cityoflewisville.com/" target="_blank">
+                                    Lewisville Library
+                                </a>
+                            </li>
+                            <li class="col s12 m6 l12 xl6">
+                                <a class="white-text underlined" href="https://www.governmentjobs.com/careers/lewisville" target="_blank">
+                                    Employment Opportunities
+                                </a>
+                            </li>
+                            <li class="col s12 m6 l12 xl6">
+                                <a class="white-text underlined" href="http://eservices.cityoflewisville.com/developmentreport/" target="_blank">
+                                    Recent Development
+                                </a>
+                            </li>
+                            <li class="col s12 m6 l12 xl6">
+                                <a class="white-text underlined" href="http://eservices.cityoflewisville.com/healthinspectionscores/" target="_blank">
+                                    Health Inspection Scores
+                                </a>
+                            </li>
+                            <li class="col s12 m6 l12 xl6">
+                                <a class="white-text underlined" href="https://www.cityoflewisville.com/about-us/city-services/building-services/building-permits" target="_blank">
+                                    Building Permits
+                                </a>
+                            </li>
+                            <li class="col s12 m6 l12 xl6">
+                                <a class="white-text underlined" href="https://www.cityoflewisville.com/about-us/city-council-meetings/2018-agendas-minutes" target="_blank">
+                                    Council Agendas & Minutes
+                                </a>
+                            </li>
+                            <li class="col s12 m6 l12 xl6">
+                                <a class="white-text underlined" href="https://www.cityoflewisville.com/about-us/city-departments/community-relations-tourism/special-events-festivals" target="_blank">
+                                    Special Events & Festivals
+                                </a>
+                            </li>
+                            <li class="col s12 m6 l12 xl6">
+                                <a class="white-text underlined" href="https://lewisvilletx.mycusthelp.com/webapp/_rs/(S(35pedc0vj3be3jswv44jxx2m))/RequestSelect.aspx?cat=5" target="_blank">
+                                    Customer Support Center
+                                </a>
+                            </li>
+                            <li class="col s12 m6 l12 xl6">
+                                <a class="white-text underlined" href="http://eservices.cityoflewisville.com/pepawards/" target="_blank">
+                                    PEP Award Dashboard
+                                </a>
+                            </li>
+                            <li class="col s12 m6 l12 xl6">
+                                <a class="white-text underlined" href="https://ecodevlewisville.com/" target="_blank">
+                                    Economic Development
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <div class="container" v-if="false">
+                    &copy; 2018 Totally Copyrighted
+                    <a class="grey-text text-lighten-4 right" href="https://www.google.com">One More Random Link</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <!-- source code -->
+    <script type="text/javascript" src="./moment/moment.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+</body>

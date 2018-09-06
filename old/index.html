@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>COL Metrics</title>
+    <!-- force no compatibility mode in IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+    <!-- google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Product+Sans:400,400i,700,700i" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Product+Sans:400,400i,700,700i" rel="stylesheet" type="text/css">
+    <!-- styles -->
+    <link rel="stylesheet" type="text/css" href="style.css" title="styles" media="screen" />
+    <link rel="stylesheet" title="styles" href="materialize/css/materialize.min.css">
+    <!-- google charts -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <!-- Vue -->
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <!-- JQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <!-- axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- materialize -->
+    <script src="materialize/js/materialize.js"></script>
+    <!-- <script src="materialize/js/materialize-icons.js"></script> -->
+    <!-- mobile friendly -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- manifest -->
+    <!-- <link rel="manifest" href="./manifest.json"> -->
+    <!--Google Analytics-->
+    <!--https://www.google.com/analytics/web/?authuser=0#realtime/rt-content/a35815214w63720524p65383322/-->
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-35815214-8']);
+        _gaq.push(['_trackPageview']); (function () {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+</head>
+
+<body>
+    <div id="app" vcloak>
+        <!-- departments dropdown -->
+        <ul id="departments-dropdown" class="dropdown-content">
+            <li v-for="dept in metricDepartments">
+                <a target="_blank" :href="cityUrl + 'department/' + dept[2].replace(/ /g, '').toLowerCase()" class="black-text">
+                    {{ dept[2] }}
+                </a>
+                <div class="divider"></div>
+            </li>
+        </ul>
+        <!-- city priorities dropdown -->
+        <ul id="citypriorities-dropdown" class="dropdown-content">
+            <li v-for="priority in metricPriorities">
+                <a target="_blank" :href="cityUrl + 'citypriority/' + priority[2].replace(/ /g, '').toLowerCase()" class="black-text">
+                    {{ priority[2] }}
+                </a>
+                <div class="divider"></div>
+            </li>
+        </ul>
+        <!-- big moves dropdown -->
+        <ul id="bigmoves-dropdown" class="dropdown-content">
+            <li v-for="bigmove in metricBigmoves">
+                <a target="_blank" :href="cityUrl + 'bigmove/' + bigmove[2].replace(/ /g, '').toLowerCase()" class="black-text">
+                    {{ bigmove[2] }}
+                </a>
+                <div class="divider"></div>
+            </li>
+        </ul>
+        <!-- begin nav -->
+        <div class="navbar-fixed">
+            <nav>
+                <div class="nav-wrapper city-purple">
+                    <a id="nav-title">
+                        <!-- <span class="hide-on-med-and-down">&nbsp;&nbsp;&nbsp;</span> -->
+                        <span class="hide-on-med-and-down" id="logo"></span> <span v-if="!stats">Performance</span><span v-else-if="stats">Statistics</span> Dashboard
+                        <!-- <span class="yellow-text"><small>BETA</small></span> -->
+                    </a>
+                    <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+                    <ul class="right hide-on-med-and-down">
+                        <!-- <li>
+                            <a v-on:click="demo" class="clickable dropdown-button"><small>4 tables demo</small></a>
+                        </li> -->
+                        <li>
+                            <a class="dropdown-button" data-activates="departments-dropdown" data-beloworigin="true">
+                                Departments<i class="material-icons right">arrow_drop_down</i>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-button" data-activates="citypriorities-dropdown" data-beloworigin="true">
+                                City Priorities<i class="material-icons right">arrow_drop_down</i>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-button" data-activates="bigmoves-dropdown" data-beloworigin="true">
+                                Big Moves<i class="material-icons right">arrow_drop_down</i>
+                            </a>
+                        </li>
+                        <li v-if="!stats">
+                            <a href="http://stats.cityoflewisville.com" target="_blank">
+                                <i class="material-icons left">insert_chart</i>Stats
+                            </a>
+                        </li>
+                        <li v-else-if="stats">
+                            <a href="http://metrics.cityoflewisville.com" target="_blank">
+                                <i class="material-icons left">dashboard</i>Metrics
+                            </a>
+                        </li>
+                        <li class="green">
+                            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfYEnw5sa4dGngKXpja9jhpLLVg6bWSnSAKEmyjX3d38eG5kw/viewform" target="_blank">Feedback</a>
+                        </li>
+                        <li>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                        </li>
+                    </ul>
+                    <ul class="side-nav" id="mobile-demo" v-if="!isLoading">
+                        <li class="no-padding">
+                            <ul class="collapsible collapsible-accordion">
+                                <li>
+                                    <a class="collapsible-header">Departments<i class="material-icons">arrow_drop_down</i></a>
+                                    <div class="collapsible-body">
+                                        <ul>
+                                            <li v-for="dept in metricDepartments">
+                                                <a target="_blank" :href="cityUrl + 'department/' + dept[2].replace(/ /g, '').toLowerCase()">{{ dept[2] }}</a>
+                                                <div class="divider"></div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a class="collapsible-header">City Priorities<i class="material-icons">arrow_drop_down</i></a>
+                                    <div class="collapsible-body">
+                                        <ul>
+                                            <li v-for="priority in metricPriorities">
+                                                <a target="_blank" :href="cityUrl + 'citypriority/' + priority[2].replace(/ /g, '').toLowerCase()">{{ priority[2] }}</a>
+                                                <div class="divider"></div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a class="collapsible-header">Big Moves<i class="material-icons">arrow_drop_down</i></a>
+                                    <div class="collapsible-body">
+                                        <ul>
+                                            <li v-for="bigmove in metricBigmoves">
+                                                <a target="_blank" :href="cityUrl + 'bigmove/' + bigmove[2].replace(/ /g, '').toLowerCase()">{{ bigmove[2] }}</a>
+                                                <div class="divider"></div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="green">
+                            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfYEnw5sa4dGngKXpja9jhpLLVg6bWSnSAKEmyjX3d38eG5kw/viewform" target="_blank">Feedback</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="preloader-wrapper big active" v-if="isLoading">
+                    <div class="spinner-layer spinner-blue-only">
+                        <div class="circle-clipper left">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <span class="left"><small>&nbsp;&nbsp;Updated: {{ lastUpdate }}{{ error }}</small></span>
+        <div v-if="!isError" class="row">
+            <div class="progress pink lighten-5" v-if="isLoadingNew" style="position: absolute; margin-top: 24px;">
+                <div class="indeterminate pink accent-3"></div>
+            </div>
+        </div>
+        <!-- begin body -->
+        <div v-if="!isError" class="row flexy">
+            <div class="col s12 m12 l2 xl2 swap-a no-col-gap" v-if="!isLoading && !stats">
+                <div class="rcow">
+                    <div id="pie-holder" class="col s12 center-align no-col-gap">
+                        <div id="pie-chart"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="intro-holder" class="col s12 m12 l10 xl10 swap-b valign-wrapper" :class="{ l12 : isLoading, 'l12 xl12': stats }" v-if="isIntro && !isLoading">
+                <p id="intro" v-if="!stats">
+                    <a class="intro-close right close-btn black-text" v-on:click="removeIntro">
+                    <span class="material-icons">close</span>
+                    </a> The City of Lewisville is committed to accountability, open communication, and continuous improvement. This performance dashboard provides valuable data used in decision making regarding service delivery, management of resources, and policy recommendations and is also used as a tool for community dialogue related to City performance. In addition, these measures are used to evaluate progress made toward achieving the City's Priorities and the <a href="https://www.cityoflewisville.com/doing-business/lewisville-2025" target="_blank">Lewisville 2025 Big Moves</a>.
+                    <br>
+                    <br> Performance metrics are derived through a variety of sources. City employees created meaningful operational performance measures that are queried in real time to provide ease in collection as well as up to the minute data. In addition, the City conducts an annual Resident Satisfaction Survey to gather resident's views of the quality of life and City provision in Lewisville. Other metrics show the City's awards and ratings by various professional associations.
+                    <br>
+                    <br> You can view performance metrics a number of ways - by department, by City Priority and by Lewisville 2025 Big Move (on the purple row at the top of the screen). In addition, performance metrics are listed below, along with the goal and the current queried values. You can sort the list by value or metric name. Metrics meeting the goal easily are coded as green. Those that meet goal by a small margin are coded as a lighter color green, and those that are not meeting goal are seen as red. By clicking on the title of a metric, you can view additional information about that metric.
+                    <br>
+                    <br> There are six Key Performance Indicators (KPI) showing on this page. These six can be changed, if desired. Click on the x in the top right of the KPI and a plus (+) sign will appear. Select the plus sign and a list of all KPIs will appear. You can add whichever KPIs you would like to view (up to 6) by selecting the title from the list of KPIs.
+                    <br>
+                    <br> This narrative can go away by selecting the X in the top right corner, thereby giving you more room to view the KPIs and list of metrics.
+                </p>
+                <p id="intro" v-else-if="stats">
+                    <a class="intro-close right close-btn black-text" v-on:click="removeIntro">
+                    <span class="material-icons">close</span>
+                    </a> The City of Lewisville is committed to accountability, open communication, and continuous improvement. This dashboard provides valuable data used in decision making regarding service delivery, management of resources, and policy recommendations and is also used as a tool for community dialogue related to City services. City employees create statistical service level measures that are queried in real time to provide ease in collection as well as up to the minute data.
+                    <br>
+                    <br> You can view these metrics a number of ways - by department, by City Priority and by Lewisville 2025 Big Move (on the purple row at the top of the screen). In addition, each metric is listed below, along with the queried values. You can sort the list by value or metric name. There are six Key Statistical Indicators (KSI) showing on this page. These six can be changed, if desired. Click on the x in the top right of the KSI and a plus (+) sign will appear. Select the plus sign and a list of all KSIs will appear. You can add whichever KSIs you would like to view (up to 6) by selecting the title from the list of KSIs.   This narrative can go away by selecting the X in the top right corner, thereby giving you more room to view the KSIs and list of metrics.
+                </p>
+            </div>
+            <div v-if="!isLoading" class="col s12 center-align kpi-holder" :class="{ 'col s12 m12 l10 xl10 center-align kpi-holder swap-b' : !isIntro && !stats }">
+                <!-- add kpi buttons -->
+                <div class="row">
+                    <div class="col s12 m6 no-col-gap">
+                        <div v-for="thing in showKPI.slice(0,3)" class="col s12 m12 l4">
+                            <div v-if="!thing.show" class="grey-text center-align" style="margin: .5rem 0 1rem 0;">
+                                <a :id="'add-kpi-' + thing.i" :href="'#modal' + thing.i">
+                                <i class="material-icons white-text kpi-add-btn grey">add</i>
+                            </a>
+                            </div>
+                            <div class="kpi card z-depth-0" v-if="thing.show" :id="'kpi'+thing.i" v-on:click="newTab(cityUrl+'department/'+KPIs[thing.i].CatName.replace(/ /g, '').toLowerCase()+'?id='+KPIs[thing.i].PSOFIA_RecordNumber)">
+                                <a class="close-btn right red-text" v-on:click="removeKPI(thing.i)">
+                                <span class="material-icons">close</span>
+                            </a>
+                                <div class="kpi-title">{{ KPIs[thing.i].metricName }}</div>
+                                <div class="white-text kpi-value" :class="getColor(KPIs[thing.i])" :id="'kpi-'+thing.i">{{ rinse(truncate(KPIs[thing.i].CurrentValue)) }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col s12 m6 no-col-gap">
+                        <div v-for="thing in showKPI.slice(3)" class="col s12 m12 l4">
+                            <div v-if="!thing.show" class="grey-text center-align" style="margin: .5rem 0 1rem 0;">
+                                <a :id="'add-kpi-' + thing.i" :href="'#modal' + thing.i">
+                                    <i class="material-icons white-text kpi-add-btn grey">add</i>
+                                </a>
+                            </div>
+                            <div class="kpi card z-depth-0" v-if="thing.show" v-on:click="newTab(cityUrl+'department/'+KPIs[thing.i].CatName.replace(/ /g, '').toLowerCase()+'?id='+KPIs[thing.i].PSOFIA_RecordNumber)">
+                                <a class="close-btn right red-text" v-on:click="removeKPI(thing.i)">
+                                    <span class="material-icons">close</span>
+                                </a>
+                                <div class="kpi-title">{{ KPIs[thing.i].metricName }}</div>
+                                <div class="white-text kpi-value" :class="getColor(KPIs[thing.i])" :id="'kpi-'+thing.i">{{ rinse(truncate(KPIs[thing.i].CurrentValue)) }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <!-- <div class="input-field col s9 m6 l4">
+                <input id="searchbar" type="search" v-model="searchTerm" />
+                <label for="searchbar">Search metrics</label>
+            </div> -->
+            <!-- <div class="col s3">
+                <a class="btn" style="margin: 12px 0" v-on:click="searchMetrics" :disabled="!searchTerm">submit</a>
+            </div> -->
+        </div>
+        <!-- sort buttons -->
+        <div class="row" id="sort-container" v-if="!isLoading">
+            <div class="col s12">
+                <span>Sort by: </span>
+                <a class="waves-effect waves-dark btn-flat" v-on:click="sortMetricsBy('shortname')" :class="{ 'grey lighten-2' : sortIcons[0].show }">
+                    <i class="material-icons left" v-if="sortIcons[0].show">{{ sortIcons[0].icon }}</i>
+                    Name
+                </a>
+                <a class="waves-effect waves-dark btn-flat" v-on:click="sortMetricsBy('CurrentMetricWeight')" :class="{ 'grey lighten-2' : sortIcons[1].show }">
+                    <i class="material-icons left" v-if="sortIcons[1].show">{{ sortIcons[1].icon }}</i>
+                    Value
+                </a>
+                <div style="display: inline-block; display: inline-block;" v-if="!stats">
+                    <!-- <div id="timerbar" class="anim"></div> -->
+                    <a v-if="sized > 2" class="waves-effect waves-dark btn-flat" :class="{ disabled : page == 1 }" v-on:click="nav('prev')"><i class="material-icons">navigate_before</i></a>
+                    <small v-if="sized > 2" class="grey-text">{{ pager }}</small>
+                    <a v-if="sized > 2" class="waves-effect waves-dark btn-flat" :class="{ disabled : page == 2 }" v-on:click="nav('next')"><i class="material-icons">navigate_next</i></a>
+                </div>
+                <a v-if="sized > 2 && !stats" class="waves-effect waves-dark btn-flat" v-on:click="pauseAutoplay()">
+                    <i class="material-icons" v-if="!isPaused">pause</i>
+                    <i class="material-icons" v-if="isPaused">play_arrow</i>
+                </a>
+                <div style="display: inline-block;" v-if="sized > 2 && !isPaused && !stats">
+                    {{ timerText }} until next page
+                </div>
+                <div style="display: inline-block;" v-if="sized > 2 && isPaused && !stats">
+                    Paused
+                </div>
+            </div>
+        </div>
+        <!-- carousel of tables -->
+        <div v-if="!isError" class="row" v-if="sized > 2">
+            <div class="carousel carousel-slider center">
+                <div class="carousel-item bg" href="#one!" id="page1">
+                    <div class="col s12 l6">
+                        <table class="card metrics-table highlight responsive-table bordered" v-if="!isLoading && sized > 2">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <span>NAME</span>
+                                    </th>
+                                    <th v-if="!stats" class="center-align">
+                                        <span>GOAL</span>
+                                    </th>
+                                    <th class="center-align">
+                                        <span>DAY</span>
+                                    </th>
+                                    <th class="center-align">
+                                        <span>WEEK</span>
+                                    </th>
+                                    <th class="center-align">
+                                        <span>MONTH</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="metrics-table">
+                                <tr v-for="metric in splitMetrics(6)" :key="metric.id" v-on:click="newTab(cityUrl+'department/'+metric.CatName.replace(/ /g, '').toLowerCase()+'?id='+metric.PSOFIA_RecordNumber)" v-if="sized == 3">
+                                    <td>{{ metric.shortname }}</td>
+                                    <td v-if="!stats" class="center-align">{{ metric.metricgoal }}</td>
+                                    <td class="center-align bold"
+                                        :class="{   'green-text' : metric.CurrentMetricColor=='GREEN' && !stats,
+                                                    'amber-text': metric.CurrentMetricColor=='YELLOW' && !stats,
+                                                    'red-text': metric.CurrentMetricColor=='RED' && !stats
+                                        }"
+
+                                        >{{ rinse(metric.CurrentValue) }}</td>
+                                    <td class="center-align bold"
+                                        :class="{   'red-text': metric.weekColor == 'red-text' && !stats,
+                                                    'amber-text' : metric.weekColor == 'amber-text' && !stats,
+                                                    'green-text' : metric.weekColor == 'green-text' && !stats }"
+                                        >{{ rinse(metric.WeeklyAvg) }}</td>
+                                    <td class="center-align bold"
+                                        :class="{   'red-text': metric.monthColor == 'red-text' && !stats,
+                                                    'amber-text' : metric.monthColor == 'amber-text' && !stats,
+                                                    'green-text' : metric.monthColor == 'green-text' && !stats }"
+                                        >{{ rinse(metric.MonthlyAvg) }}
+                                    </td>
+                                </tr>
+                                <tr v-for="metric in splitMetrics(6)" :key="metric.id" v-on:click="newTab(cityUrl+'department/'+metric.CatName.replace(/ /g, '').toLowerCase()+'?id='+metric.PSOFIA_RecordNumber)" v-if="sized == 4">
+                                    <td>{{ metric.shortname }}</td>
+                                    <td v-if="!stats" class="center-align">{{ metric.metricgoal }}</td>
+                                    <td class="center-align bold"
+                                        :class="{   'green-text' : metric.CurrentMetricColor=='GREEN' && !stats,
+                                                    'amber-text': metric.CurrentMetricColor=='YELLOW' && !stats,
+                                                    'red-text': metric.CurrentMetricColor=='RED' && !stats
+                                        }"
+
+                                        >{{ rinse(metric.CurrentValue) }}</td>
+                                    <td class="center-align bold"
+                                        :class="{   'red-text': metric.weekColor == 'red-text' && !stats,
+                                                    'amber-text' : metric.weekColor == 'amber-text' && !stats,
+                                                    'green-text' : metric.weekColor == 'green-text' && !stats }"
+                                        >{{ rinse(metric.WeeklyAvg) }}</td>
+                                    <!-- v-bind:class="{ 'black-text' : true }" -->
+                                    <td class="center-align bold"
+                                        :class="{   'red-text': metric.monthColor == 'red-text' && !stats,
+                                                    'amber-text' : metric.monthColor == 'amber-text' && !stats,
+                                                    'green-text' : metric.monthColor == 'green-text' && !stats }"
+                                        >{{ rinse(metric.MonthlyAvg) }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col s12 l6" v-if="sized > 2">
+                        <table class="card metrics-table highlight responsive-table bordered" v-if="!isLoading && sized > 2">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <span>NAME</span>
+                                    </th>
+                                    <th v-if="!stats" class="center-align">
+                                        <span>GOAL</span>
+                                    </th>
+                                    <th class="center-align">
+                                        <span>DAY</span>
+                                    </th>
+                                    <th class="center-align">
+                                        <span>WEEK</span>
+                                    </th>
+                                    <th class="center-align">
+                                        <span>MONTH</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="metrics-table">
+                                <tr v-for="metric in splitMetrics(7)" :key="metric.id" v-on:click="newTab(cityUrl+'department/'+metric.CatName.replace(/ /g, '').toLowerCase()+'?id='+metric.PSOFIA_RecordNumber)" v-if="sized == 3">
+                                    <td>{{ metric.shortname }}</td>
+                                    <td v-if="!stats" class="center-align">{{ metric.metricgoal }}</td>
+                                    <td class="center-align bold"
+                                        :class="{   'green-text' : metric.CurrentMetricColor=='GREEN' && !stats,
+                                                    'amber-text': metric.CurrentMetricColor=='YELLOW' && !stats,
+                                                    'red-text': metric.CurrentMetricColor=='RED' && !stats
+                                        }"
+
+                                        >{{ rinse(metric.CurrentValue) }}</td>
+                                    <td class="center-align bold"
+                                        :class="{   'red-text': metric.weekColor == 'red-text' && !stats,
+                                                    'amber-text' : metric.weekColor == 'amber-text' && !stats,
+                                                    'green-text' : metric.weekColor == 'green-text' && !stats }"
+                                        >{{ rinse(metric.WeeklyAvg) }}</td>
+                                    <td class="center-align bold"
+                                        :class="{   'red-text': metric.monthColor == 'red-text' && !stats,
+                                                    'amber-text' : metric.monthColor == 'amber-text' && !stats,
+                                                    'green-text' : metric.monthColor == 'green-text' && !stats }"
+                                        >{{ rinse(metric.MonthlyAvg) }}
+                                    </td>
+                                </tr>
+                                <tr v-for="metric in splitMetrics(7)" :key="metric.id" v-on:click="newTab(cityUrl+'department/'+metric.CatName.replace(/ /g, '').toLowerCase()+'?id='+metric.PSOFIA_RecordNumber)" v-if="sized == 4">
+                                    <td>{{ metric.shortname }}</td>
+                                    <td v-if="!stats" class="center-align">{{ metric.metricgoal }}</td>
+                                    <td class="center-align bold"
+                                        :class="{   'green-text' : metric.CurrentMetricColor=='GREEN' && !stats,
+                                                    'amber-text': metric.CurrentMetricColor=='YELLOW' && !stats,
+                                                    'red-text': metric.CurrentMetricColor=='RED' && !stats
+                                        }"
+
+                                        >{{ rinse(metric.CurrentValue) }}</td>
+                                    <td class="center-align bold"
+                                        :class="{   'red-text': metric.weekColor == 'red-text' && !stats,
+                                                    'amber-text' : metric.weekColor == 'amber-text' && !stats,
+                                                    'green-text' : metric.weekColor == 'green-text' && !stats }"
+                                        >{{ rinse(metric.WeeklyAvg) }}</td>
+                                    <td class="center-align bold"
+                                        :class="{   'red-text': metric.monthColor == 'red-text' && !stats,
+                                                    'amber-text' : metric.monthColor == 'amber-text' && !stats,
+                                                    'green-text' : metric.monthColor == 'green-text' && !stats }"
+                                        >{{ rinse(metric.MonthlyAvg) }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="carousel-item bg" href="#two!" id="page2" v-if="!stats">
+                    <div class="col s12 l6">
+                        <table class="card metrics-table highlight responsive-table bordered" v-if="!isLoading && sized > 2">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <span>NAME</span>
+                                    </th>
+                                    <th v-if="!stats" class="center-align">
+                                        <span>GOAL</span>
+                                    </th>
+                                    <th class="center-align">
+                                        <span>DAY</span>
+                                    </th>
+                                    <th class="center-align">
+                                        <span>WEEK</span>
+                                    </th>
+                                    <th class="center-align">
+                                        <span>MONTH</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="metrics-table">
+                                <tr v-for="metric in splitMetrics(8)" :key="metric.id" v-on:click="newTab(cityUrl+'department/'+metric.CatName.replace(/ /g, '').toLowerCase()+'?id='+metric.PSOFIA_RecordNumber)" v-if="sized == 3">
+                                    <td>{{ metric.shortname }}</td>
+                                    <td v-if="!stats" class="center-align">{{ metric.metricgoal }}</td>
+                                    <td class="center-align bold"
+                                        :class="{   'green-text' : metric.CurrentMetricColor=='GREEN' && !stats,
+                                                    'amber-text': metric.CurrentMetricColor=='YELLOW' && !stats,
+                                                    'red-text': metric.CurrentMetricColor=='RED' && !stats
+                                        }"
+
+                                        >{{ rinse(metric.CurrentValue) }}</td>
+                                    <td class="center-align bold"
+                                        :class="{   'red-text': metric.weekColor == 'red-text' && !stats,
+                                                    'amber-text' : metric.weekColor == 'amber-text' && !stats,
+                                                    'green-text' : metric.weekColor == 'green-text' && !stats }"
+                                        >{{ rinse(metric.WeeklyAvg) }}</td>
+                                    <td class="center-align bold"
+                                        :class="{   'red-text': metric.monthColor == 'red-text' && !stats,
+                                                    'amber-text' : metric.monthColor == 'amber-text' && !stats,
+                                                    'green-text' : metric.monthColor == 'green-text' && !stats }"
+                                        >{{ rinse(metric.MonthlyAvg) }}
+                                    </td>
+                                </tr>
+                                <tr v-for="metric in splitMetrics(8)" :key="metric.id" v-on:click="newTab(cityUrl+'department/'+metric.CatName.replace(/ /g, '').toLowerCase()+'?id='+metric.PSOFIA_RecordNumber)" v-if="sized == 4">
+                                    <td>{{ metric.shortname }}</td>
+                                    <td v-if="!stats" class="center-align">{{ metric.metricgoal }}</td>
+                                    <td class="center-align bold"
+                                        :class="{   'green-text' : metric.CurrentMetricColor=='GREEN' && !stats,
+                                                    'amber-text': metric.CurrentMetricColor=='YELLOW' && !stats,
+                                                    'red-text': metric.CurrentMetricColor=='RED' && !stats
+                                        }"
+
+                                        >{{ rinse(metric.CurrentValue) }}</td>
+                                    <td class="center-align bold"
+                                        :class="{   'red-text': metric.weekColor == 'red-text' && !stats,
+                                                    'amber-text' : metric.weekColor == 'amber-text' && !stats,
+                                                    'green-text' : metric.weekColor == 'green-text' && !stats }"
+                                        >{{ rinse(metric.WeeklyAvg) }}</td>
+                                    <td class="center-align bold"
+                                        :class="{   'red-text': metric.monthColor == 'red-text' && !stats,
+                                                    'amber-text' : metric.monthColor == 'amber-text' && !stats,
+                                                    'green-text' : metric.monthColor == 'green-text' && !stats }"
+                                        >{{ rinse(metric.MonthlyAvg) }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col s12 l6">
+                        <table class="card metrics-table highlight responsive-table bordered" v-if="!isLoading && sized > 2">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <span>NAME</span>
+                                    </th>
+                                    <th v-if="!stats" class="center-align">
+                                        <span>GOAL</span>
+                                    </th>
+                                    <th class="center-align">
+                                        <span>DAY</span>
+                                    </th>
+                                    <th class="center-align">
+                                        <span>WEEK</span>
+                                    </th>
+                                    <th class="center-align">
+                                        <span>MONTH</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="metrics-table">
+                                <tr v-for="metric in splitMetrics(9)" :key="metric.id" v-on:click="newTab(cityUrl+'department/'+metric.CatName.replace(/ /g, '').toLowerCase()+'?id='+metric.PSOFIA_RecordNumber)" v-if="sized > 2">
+                                    <td>{{ metric.shortname }}</td>
+                                    <td v-if="!stats" class="center-align">{{ metric.metricgoal }}</td>
+                                    <td class="center-align bold"
+                                        :class="{   'green-text' : metric.CurrentMetricColor=='GREEN' && !stats,
+                                                    'amber-text': metric.CurrentMetricColor=='YELLOW' && !stats,
+                                                    'red-text': metric.CurrentMetricColor=='RED' && !stats
+                                        }"
+
+                                        >{{ rinse(metric.CurrentValue) }}</td>
+                                    <td class="center-align bold"
+                                        :class="{   'red-text': metric.weekColor == 'red-text' && !stats,
+                                                    'amber-text' : metric.weekColor == 'amber-text' && !stats,
+                                                    'green-text' : metric.weekColor == 'green-text' && !stats }"
+                                        >{{ rinse(metric.WeeklyAvg) }}</td>
+                                    <td class="center-align bold"
+                                        :class="{   'red-text': metric.monthColor == 'red-text' && !stats,
+                                                    'amber-text' : metric.monthColor == 'amber-text' && !stats,
+                                                    'green-text' : metric.monthColor == 'green-text' && !stats }"
+                                        >{{ rinse(metric.MonthlyAvg) }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- smallest screen -->
+        <div class="row" v-if="sized <= 2">
+            <div class="col s12 l6">
+                <table class="card metrics-table highlight responsive-table bordered" v-if="!isLoading">
+                    <thead>
+                        <tr>
+                            <th>
+                                <span>NAME</span>
+                            </th>
+                            <th>
+                                <span>GOAL</span>
+                            </th>
+                            <th class="right-align">
+                                <span>DAY</span>
+                            </th>
+                            <th class="right-align">
+                                <span>WEEK</span>
+                            </th>
+                            <th class="right-align">
+                                <span>MONTH</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="metrics-table">
+                        <tr v-for="metric in metricData" :key="metric.id" v-on:click="newTab(cityUrl+'department/'+metric.CatName.replace(/ /g, '').toLowerCase())">
+                            <td>{{ metric.shortname }}</td>
+                            <td v-if="!stats" class="center-align">{{ metric.metricgoal }}</td>
+                            <td class="center-align bold"
+                                :class="{   'green-text' : metric.CurrentMetricColor=='GREEN' && !stats,
+                                            'amber-text': metric.CurrentMetricColor=='YELLOW' && !stats,
+                                            'red-text': metric.CurrentMetricColor=='RED' && !stats
+                                }"
+
+                                >{{ rinse(metric.CurrentValue) }}</td>
+                            <td class="center-align bold"
+                                :class="{   'red-text': metric.weekColor == 'red-text' && !stats,
+                                            'amber-text' : metric.weekColor == 'amber-text' && !stats,
+                                            'green-text' : metric.weekolor == 'green-text' && !stats }"
+                                >{{ rinse(metric.WeeklyAvg) }}</td>
+                            <td class="center-align bold"
+                                :class="{   'red-text': metric.monthColor == 'red-text' && !stats,
+                                            'amber-text' : metric.monthColor == 'amber-text' && !stats,
+                                            'green-text' : metric.monthColor == 'green-text' && !stats }"
+                                >{{ rinse(metric.MonthlyAvg) }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Modal Structure -->
+        <div :id="'modal' + thing.i" class="modal modal-fixed-footer chooser-modal" v-for="thing in showKPI">
+            <div class="modal-content white">
+                <h5 class="grey-text text-darken-1">Select a metric from below</h5>
+                <ul>
+                    <li v-for="metric in metricDataAlpha" v-on:click="storeKPI(thing.i, metric)" v-if="metric.metricName" class="modal-close modal-li">
+                        <p class="grey-text text-darken-1 left-align">{{ metric.metricName }}</p>
+                        <div class="divider"></div>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer white">
+                <a class="modal-action modal-close waves-effect btn-flat">Close</a>
+            </div>
+        </div>
+        <!-- Metric Detail Modal -->
+        <div id="metric-modal" class="modal modal-fixed-footer">
+            <div class="modal-content white row">
+                <h5 class="col s12 metric-modal-title">{{ currentMetric.metricname }}</h5>
+
+                <!-- lefty -->
+                <div class="col s12 l5 lefty">
+                    <!-- gauge -->
+                    <div class="col s12 center-align"
+                        v-if="(currentMetric.metrictype == 'Query' && currentMetric.gaugedataformat == 'PERCENT')
+                                || (currentMetric.metrictype == 'Static' && currentMetric.staticsymbol == 'Gauge')">
+                                <div id="metric-gauge">gauge</div>
+                    </div>
+                    <!-- integer -->
+                    <div class="col s12 metric-int center-align" v-else-if="currentMetric.metrictype == 'Query' && currentMetric.gaugedataformat == 'INTEGER'">
+                        {{ currentMetric.value }}
+                    </div>
+                </div>
+
+                <!-- righty -->
+                <div class="col s12 l7 righty">
+                    <div class="metric-details col s12">
+                        <div class="col s12 header grey-text">Department:</div>
+                        <div class="col s12">{{ currentMetric.category1_VSVal_ }}</div>
+                        <div class="col s12 header grey-text">Description:</div>
+                        <div class="col s12">{{ currentMetric.metricdescription }}</div>
+                        <div class="col s12 header grey-text">Goal:</div>
+                        <div class="col s12">{{ currentMetric.metricgoal }}</div>
+                        <div class="col s12 header grey-text">Time Period:</div>
+                        <div class="col s12" v-if="currentMetric.timeperiod">{{ currentMetric.timeperiod }}</div>
+                        <div class="col s12 header grey-text">Source:</div>
+                        <div class="col s12">{{ currentMetric.realtimedsdescription }}</div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer white">
+                <a class="modal-action modal-close waves-effect btn-flat">Close</a>
+                <a  class="btn deep-purple lighten-3 waves-effect"
+                    v-if="currentMetric.category1_VSVal_ && currentMetric.category1_VSVal_ != 'N/A'"
+                    v-on:click="newTab(cityUrl+'department/'+currentMetric.CatName.replace(/ /g, '').toLowerCase())">
+                    {{ currentMetric.category1_VSVal_ }}...
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- source code -->
+    <script type="text/javascript" src="app.js"></script>
+</body>
+
+<!-- just saving for later -->
+<!-- v-on:click="metricDetails(metric)" -->

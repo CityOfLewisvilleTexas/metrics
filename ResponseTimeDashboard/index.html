@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+    <head>
+        
+        <title>Response Times</title>
+        
+        <link rel="apple-touch-icon" sizes="120x120" href="images/apple-touch-icon.png">
+        <link rel="icon" type="image/png" href="images/favicon-32x32.png" sizes="32x32">
+        <link rel="icon" type="image/png" href="images/favicon-16x16.png" sizes="16x16">
+        <link rel="manifest" href="images/manifest.json">
+        <link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#5bbad5">
+        <meta name="theme-color" content="#ffffff">
+
+        <!--Internet Explorer - use latest version-->
+        <meta http-equiv="x-ua-compatible" content="IE=edge">
+
+        <!--Allow "Add to homescreen" on mobile browsers-->
+        <meta name="mobile-web-app-capable" content="yes">
+
+        <!--Keep mobile browsers at correct zoom-->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+        <!--Custom CSS-->
+        <link rel="stylesheet" href="styles/main.css"/>
+
+        <!--Bootstrap CSS-->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>           
+
+        <!--Fonts-->
+        <link href='https://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+
+        <!--Jquery-->
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+
+        <!--Bootstrap js-->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+        <!--Google Charts API-->
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+        <!--Custom JS-->
+        <script src="scripts/main.js"></script>
+    </head>
+    
+    <body>
+        <!--=============================================================-->
+        <!-- Navbar -->
+        <nav class="navbar navbar-default">
+
+            <div class="container-fluid">
+
+                <!--Navbar Header-->
+                <div class="navbar-header"> 
+
+                    <!--Site Title - sm to lg-->
+                    <a class="hidden-xs nav-site-title-container navbar-brand" href="#/home"> 
+                        <img class="hidden-xs nav-city-logo" src="images/citylogo.svg">
+                        <h1 class=" hidden-xs nav-site-title">Response Times <small>BETA</small></h1>
+                    </a>
+                    
+                    <!--Site Title - xs-->
+                    <a class="visible-xs hidden-sm nav-site-title-container navbar-brand" href="#/home"> 
+                        <img class="visible-xs hidden-sm nav-city-logo-xs" src="images/citylogo.svg">
+                        <span class="visible-xs hidden-sm nav-site-title-xs">Response Times <small>BETA</small></span>
+                    </a>
+                </div> <!--/.navbar-header-->
+                
+            </div> <!-- /.container-fluid -->
+        </nav>
+        
+        <!--=============================================================-->
+        <!--Date-Range Controls-->
+            <div class="date-range-container" role="search">
+                <div>
+                    <label for="date1">Date Range:</label>
+                    <input id="date1" type="date" class="form-control" placeholder="Date 1">                                
+                    <input id="date2" type="date" class="form-control" placeholder="Date 2">
+                </div>
+                <button id="btnSubmitDateRange" type="button" class="btn btn-primary">Submit</button>
+            </div>
+
+        <!--=============================================================-->
+        <!--Description-->
+            <div class="nav-site-description">
+                <h4><b>Charts include the previous 365 days unless adjusted using the Date Range options above. </b></h4>
+                <p class="site-narrative">Data is for non-officer-initiated calls for service (ie calls from residents for service). Data is filtered to priority 1 call types. Response time is calculated from the time the call was received in the dispatch center to when the first police-unit arrived on the scene. This data has not been audited and is pulled live from the computer
+                aided dispatch database.</p>
+                <p id="lblLastImported">...</p>
+                
+                <h1 id="bannerCurrentRT" style="margin-bottom: 1px;">Getting latest data...</h1>
+                <span id="bannerCurrentRTTemplate" style="display:none;">Average: {{AVG}} min <small>({{TOTAL}} Priority 1 Calls)</small></span>
+                <div style="font-size:0.9em; text-align:center; width: 100%;">Average is calculated using Time Received to Time OnScene</div>
+            </div>
+            <br>
+        
+        <!--=============================================================-->
+        <!--Chart containers-->  
+            <div class="row">
+                <!--
+                <div class="col-xs-0 col-sm-0 col-md-0 col-lg-1 site-layout-side-col">
+                </div>
+                -->
+                <div class="col-md-12">  
+                    <div class="row">
+                        <b style="font-size:1.3em;">By Call-Categories</b><small> (Click a slice to filter bar-chart)</small>
+                        <hr>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12 col-lg-5 chart-container-col donut-chart-container">
+                           <div id="donutchart"></div>  
+                        </div>
+                        <!--<div id="arrow-right"></div>-->
+                        <div class="col-md-12 col-lg-7 chart-container-col column-chart-container">
+                            <div id="columnchart"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="row" style="margin-top:2em;">
+                        <b style="font-size:1.3em;">History</b>
+                        <hr>
+                    </div>
+                    <div class="row">
+                        <div id="linechart"></div>
+                    </div>
+                </div>
+
+        
+        <!--=============================================================-->
+        <!-- Modal - Calls per complaint-type-->
+            <div class="modal large-Modal fade" id="popupCalls" tabindex="-1" role="dialog">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  
+                    <!--Modal Header-->
+                    <div class="modal-header">
+                        <h3 id="popupCallsTitle"></h3>
+                        <!-- <button class="close" data-dismiss="modal"><span>&times;</span></button> -->
+                    </div>
+                  
+                    <!--Modal Body-->
+                    <div class="modal-body"> 
+                        
+                        <h4 id="popupCallsCount"></h4>
+                        <div id="popupCalls_Body" style="height:500px; overflow: hidden;">
+                        </div>
+                    </div>
+                  
+                    <!--Modal Footer-->
+                    <div class="modal-footer">
+                        <!--Close-button-->
+                        <button class="btn btn-default" id="close-modal-btn" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div><!--Modal--> 
+        
+  </body>
+</html>

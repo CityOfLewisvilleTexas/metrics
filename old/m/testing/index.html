@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>COL Metrics</title>
+    <!-- force no compatibility mode in IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+    <!-- google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Product+Sans:400,400i,700,700i" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Product+Sans:400,400i,700,700i" rel="stylesheet" type="text/css">
+    <!-- styles -->
+    <link rel="stylesheet" type="text/css" href="style.css" title="styles" media="screen" />
+    <link rel="stylesheet" title="styles" href="materialize/css/materialize.min.css">
+    <!-- google charts -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <!-- Vue -->
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <!-- JQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <!-- axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- materialize -->
+    <script src="materialize/js/materialize.js"></script>
+    <!-- mobile friendly -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- manifest -->
+    <!-- <link rel="manifest" href="./manifest.json"> -->
+</head>
+
+<body>
+    <div id="app">
+        <!-- departments dropdown -->
+        <ul id="departments-dropdown" class="dropdown-content">
+            <li v-for="dept in metricDepartments">
+                <a target="_blank" :href="cityUrl + 'department/' + dept[1]" class="black-text">
+                    {{ dept[2] }}
+                </a>
+                <div class="divider"></div>
+            </li>
+        </ul>
+        <!-- city priorities dropdown -->
+        <ul id="citypriorities-dropdown" class="dropdown-content">
+            <li v-for="priority in metricPriorities">
+                <a target="_blank" :href="cityUrl + 'priority/' + priority[1]" class="black-text">
+                    {{ priority[2] }}
+                </a>
+                <div class="divider"></div>
+            </li>
+        </ul>
+        <!-- big moves dropdown -->
+        <ul id="bigmoves-dropdown" class="dropdown-content">
+            <li v-for="bigmove in metricBigmoves">
+                <a target="_blank" :href="cityUrl + 'bigmove/' + bigmove[1]" class="black-text">
+                    {{ bigmove[2] }}
+                </a>
+                <div class="divider"></div>
+            </li>
+        </ul>
+        <!-- begin nav -->
+        <div class="navbar-fixed">
+            <nav>
+                <div class="nav-wrapper deep-purple">
+                    <a id="nav-title">
+                        <!-- <span class="hide-on-med-and-down">&nbsp;&nbsp;&nbsp;</span> -->
+                        <span class="hide-on-med-and-down" id="logo"></span> Performance Dashboard
+                    </a>
+                    <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+
+                    <ul class="right hide-on-med-and-down">
+                        <li>
+                            <a class="dropdown-button" data-activates="departments-dropdown" data-beloworigin="true">
+                                Departments<i class="material-icons right">arrow_drop_down</i>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-button" data-activates="citypriorities-dropdown" data-beloworigin="true">
+                                City Priorities<i class="material-icons right">arrow_drop_down</i>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-button" data-activates="bigmoves-dropdown" data-beloworigin="true">
+                                Big Moves<i class="material-icons right">arrow_drop_down</i>
+                            </a>
+                        </li>
+                        <li>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                        </li>
+                    </ul>
+                    <ul class="side-nav" id="mobile-demo" v-if="!isLoading">
+                        <li class="no-padding">
+                            <ul class="collapsible collapsible-accordion">
+                                <li>
+                                    <a class="collapsible-header">Departments<i class="material-icons">arrow_drop_down</i></a>
+                                    <div class="collapsible-body">
+                                        <ul>
+                                            <li v-for="dept in metricDepartments">
+                                                <a target="_blank" :href="cityUrl + 'department/' + dept[1]">{{ dept[2] }}</a>
+                                                <div class="divider"></div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a class="collapsible-header">City Priorities<i class="material-icons">arrow_drop_down</i></a>
+                                    <div class="collapsible-body">
+                                        <ul>
+                                            <li v-for="priority in metricPriorities">
+                                                <a target="_blank" :href="cityUrl + 'priority/' + priority[1]">{{ priority[2] }}</a>
+                                                <div class="divider"></div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a class="collapsible-header">Big Moves<i class="material-icons">arrow_drop_down</i></a>
+                                    <div class="collapsible-body">
+                                        <ul>
+                                            <li v-for="bigmove in metricBigmoves">
+                                                <a target="_blank" :href="cityUrl + 'bigmove/' + bigmove[1]">{{ bigmove[2] }}</a>
+                                                <div class="divider"></div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <!-- <div class="progress pink lighten-5" v-if="isLoading">
+                    <div class="indeterminate pink accent-3"></div>
+                </div> -->
+                <div class="preloader-wrapper big active" v-if="isLoading">
+                    <div class="spinner-layer spinner-blue-only">
+                        <div class="circle-clipper left">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="row"></div>
+        <!-- begin body -->
+        <div class="row flexy">
+            <div class="col s12 m12 l2 xl2 swap-a no-col-gap" v-if="!isLoading">
+                <div class="rcow">
+                    <div id="pie-holder" class="col s12 center-align no-col-gap">
+                        <div id="pie-chart"></div>
+                        <!-- <img id="pieng" /> -->
+                        <div id="cityscore">{{ grade(cityscore) }}</div>
+                        <!-- <span>{{ '('+cityscore+')' }}</span> -->
+                        <!-- <div id="cityscore" class="col s12 m6 l4 center-align">{{ cityscore }}</div> -->
+                    </div>
+                </div>
+            </div>
+            <div id="intro-holder" class="col s12 m12 l10 xl10 swap-b valign-wrapper" :class="{ l12 : isLoading }" v-if="isIntro && !isLoading">
+                <p id="intro">
+                    <a class="intro-close right close-btn black-text" v-on:click="removeIntro">
+                    <span class="material-icons">close</span>
+                </a> The City of Lewisville is committed to accountability, open communication, and continuous improvement. This performance dashboard provides valuable data used in decision making regarding service delivery, management of resources, and policy recommendations and is also used as a tool for community dialogue related to City performance. These measures are also used to evaluate progress made toward achieving the City's Priorities and the Lewisville Vision 2025 Big Moves.
+                    <br>
+                    <br> Performance metrics are derived through a variety of sources. City employees created meaningful operational performance measures that are queried in real time to provide ease in collection as well as up to the minute data. In addition, the City conducts an annual Resident Satisfaction Survey to gather resident's views of the quality of life and City provision in Lewisville. Other metrics show the City's awards and ratings by various professional associations.
+                    <br>
+                    <br> You can view performance metrics a number of ways - by department, by City Priority and by Lewisville 2025 Big Move . In addition, performance metrics are listed below along with the goal and the current queried value. Each of these metrics are given a weight by City Management and City Council used to calculate an average score. This score is updated every fifteen minutes, based on real-time data.
+                </p>
+            </div>
+            <div v-if="!isLoading" class="col s12 center-align kpi-holder" :class="{ 'col s12 m12 l10 xl10 center-align kpi-holder swap-b' : !isIntro }">
+                <!-- add kpi buttons -->
+                <div class="row">
+                    <div class="col s12 m6 no-col-gap">
+                        <div v-for="thing in showKPI.slice(0,3)" class="col s12 m12 l4">
+                            <div v-if="!thing.show" class="grey-text center-align" style="margin: .5rem 0 1rem 0;">
+                                <a :id="'add-kpi-' + thing.i" :href="'#modal' + thing.i">
+								<i class="material-icons white-text kpi-add-btn grey">add</i>
+                    		</a>
+                            </div>
+                            <div class="kpi card z-depth-0" v-if="thing.show" :id="'kpi'+thing.i">
+                                <a class="close-btn right red-text" v-on:click="removeKPI(thing.i)">
+                        		<span class="material-icons">close</span>
+                    		</a>
+                                <div class="kpi-title">{{ KPIs[thing.i].metricName }}</div>
+                                <div :class="getColor(KPIs[thing.i]) + ' kpi-value white-text'">{{ truncate(KPIs[thing.i].CurrentValue) }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col s12 m6 no-col-gap">
+                        <div v-for="thing in showKPI.slice(3)" class="col s12 m12 l4">
+                            <div v-if="!thing.show" class="grey-text center-align" style="margin: .5rem 0 1rem 0;">
+                                <a :id="'add-kpi-' + thing.i" :href="'#modal' + thing.i">
+									<i class="material-icons white-text kpi-add-btn grey">add</i>
+                    			</a>
+                            </div>
+                            <div class="kpi card z-depth-0" v-if="thing.show">
+                                <a class="close-btn right red-text" v-on:click="removeKPI(thing.i)">
+                        			<span class="material-icons">close</span>
+                    			</a>
+                                <div class="kpi-title">{{ KPIs[thing.i].metricName }}</div>
+                                <div :class="getColor(KPIs[thing.i]) + ' kpi-value white-text'">{{ truncate(KPIs[thing.i].CurrentValue) }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12 m12 l6 xl4">
+                <small class="grey-text" v-if="!isLoading && compressed && !xcompressed">{{ '1 - ' + (splitMetrics(1).length) }}</small>
+                <small class="grey-text" v-if="!isLoading && !compressed && xcompressed">{{ '1 - ' + (splitMetrics(1).length+splitMetrics(2).length) }}</small>
+                <small class="grey-text" v-if="!isLoading && !compressed && !xcompressed">{{ '1 - ' + (splitMetrics(3).length) }}</small>
+                <div class="card table-container">
+                    <table class="metrics-table highlight responsive-table bordered" v-if="!isLoading">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <span class="material-icons" v-if="sortIcons[0].show">{{ sortIcons[0].icon }}</span>
+                                    <span class="clickable" v-on:click="sortMetricsBy('shortname')">Name</span>
+                                </th>
+                                <th>
+                                    <span>Goal</span>
+                                </th>
+                                <th class="right-align">
+                                    <span>Value</span>
+                                </th>
+                                <th class="right-align">
+                                    <span class="material-icons" v-if="sortIcons[1].show">{{ sortIcons[1].icon }}</span>
+                                    <span class="clickable" v-on:click="sortMetricsBy('CurrentMetricWeight')">Score</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="metrics-table">
+                            <tr v-for="metric in splitMetrics(1)" :key="metric.id" v-if="!xcompressed && compressed">
+                                <td>{{ metric.shortname }}</td>
+                                <td>{{ metric.metricgoal }}</td>
+                                <td class="right-align">{{ metric.CurrentValue }}</td>
+                                <td class="right-align" :class="getColor(metric) + '-text'" class="table-value">{{ getScore(metric) }}</td>
+                                <td><a target="_blank" :href="cityUrl + 'department/' + metric.category1"><i class="material-icons grey-text">call_made</i></a></td>
+                            </tr>
+                            <tr v-for="metric in metricData" v-if="xcompressed && !compressed" :key="metric.id">
+                                <td>{{ metric.shortname }}</td>
+                                <td>{{ metric.metricgoal }}</td>
+                                <td class="right-align">{{ metric.CurrentValue }}</td>
+                                <td class="right-align" :class="getColor(metric) + '-text'" class="table-value">{{ getScore(metric) }}</td>
+                                <td><a target="_blank" :href="cityUrl + 'department/' + metric.category1"><i class="material-icons grey-text">call_made</i></a></td>
+                            </tr>
+                            <tr v-for="metric in splitMetrics(3)" v-if="!xcompressed && !compressed" :key="metric.id">
+                                <td>{{ metric.shortname }}</td>
+                                <td>{{ metric.metricgoal }}</td>
+                                <td class="right-align">{{ metric.CurrentValue }}</td>
+                                <td class="right-align" :class="getColor(metric) + '-text'" class="table-value">{{ getScore(metric) }}</td>
+                                <td><a target="_blank" :href="cityUrl + 'department/' + metric.category1"><i class="material-icons grey-text">call_made</i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col s12 m12 l6 xl4">
+                <small class="grey-text" v-if="!isLoading && compressed">{{ (splitMetrics(1).length+1) + ' - ' + (splitMetrics(1).length+splitMetrics(2).length) }}</small>
+                <small class="grey-text" v-if="!isLoading && !compressed && !xcompressed">{{ (splitMetrics(3).length+1) + ' - ' + (splitMetrics(3).length+splitMetrics(4).length) }}</small>
+                <div class="card table-container">
+                    <table class="metrics-table highlight responsive-table bordered" v-if="!isLoading && compressed && !xcompressed">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <span class="material-icons" v-if="sortIcons[0].show">{{ sortIcons[0].icon }}</span>
+                                    <span class="clickable" v-on:click="sortMetricsBy('shortname')">Name</span>
+                                </th>
+                                <th>
+                                    <span>Goal</span>
+                                </th>
+                                <th class="right-align">
+                                    <span>Value</span>
+                                </th>
+                                <th class="right-align">
+                                    <span class="material-icons" v-if="sortIcons[1].show">{{ sortIcons[1].icon }}</span>
+                                    <span class="clickable" v-on:click="sortMetricsBy('CurrentMetricWeight')">Score</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="metrics-table">
+                            <tr v-for="metric in splitMetrics(2)" :key="metric.id">
+                                <td>{{ metric.shortname }}</td>
+                                <td>{{ metric.metricgoal }}</td>
+                                <td class="right-align">{{ metric.CurrentValue }}</td>
+                                <td class="right-align" :class="getColor(metric) + '-text'" class="table-value">{{ getScore(metric) }}</td>
+                                <td><a target="_blank" :href="cityUrl + 'department/' + metric.category1"><i class="material-icons grey-text">call_made</i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card table-container">
+                    <table class="metrics-table highlight responsive-table bordered" v-if="!isLoading && !compressed && !xcompressed">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <span class="material-icons" v-if="sortIcons[0].show">{{ sortIcons[0].icon }}</span>
+                                    <span class="clickable" v-on:click="sortMetricsBy('shortname')">Name</span>
+                                </th>
+                                <th>
+                                    <span>Goal</span>
+                                </th>
+                                <th class="right-align">
+                                    <span>Value</span>
+                                </th>
+                                <th class="right-align">
+                                    <span class="material-icons" v-if="sortIcons[1].show">{{ sortIcons[1].icon }}</span>
+                                    <span class="clickable" v-on:click="sortMetricsBy('CurrentMetricWeight')">Score</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="metrics-table">
+                            <tr v-for="metric in splitMetrics(4)" :key="metric.id">
+                                <td>{{ metric.shortname }}</td>
+                                <td>{{ metric.metricgoal }}</td>
+                                <td class="right-align">{{ metric.CurrentValue }}</td>
+                                <td class="right-align" :class="getColor(metric) + '-text'" class="table-value">{{ getScore(metric) }}</td>
+                                <td><a target="_blank" :href="cityUrl + 'department/' + metric.category1"><i class="material-icons grey-text">call_made</i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col s12 m12 l6 xl4">
+                <small class="grey-text" v-if="!isLoading && !compressed && !xcompressed">{{ (splitMetrics(3).length+splitMetrics(4).length+1) + ' - ' + (splitMetrics(3).length+splitMetrics(4).length+splitMetrics(5).length) }}</small>
+                <div class="card table-container">
+                    <table class="metrics-table highlight responsive-table bordered" v-if="!isLoading && !compressed && !xcompressed">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <span class="material-icons" v-if="sortIcons[0].show">{{ sortIcons[0].icon }}</span>
+                                    <span class="clickable" v-on:click="sortMetricsBy('shortname')">Name</span>
+                                </th>
+                                <th>
+                                    <span>Goal</span>
+                                </th>
+                                <th class="right-align">
+                                    <span>Value</span>
+                                </th>
+                                <th class="right-align">
+                                    <span class="material-icons" v-if="sortIcons[1].show">{{ sortIcons[1].icon }}</span>
+                                    <span class="clickable" v-on:click="sortMetricsBy('CurrentMetricWeight')">Score</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="metrics-table">
+                            <tr v-for="metric in splitMetrics(5)" :key="metric.id">
+                                <td>{{ metric.shortname }}</td>
+                                <td>{{ metric.metricgoal }}</td>
+                                <td class="right-align">{{ metric.CurrentValue }}</td>
+                                <td class="right-align" :class="getColor(metric) + '-text'" class="table-value">{{ getScore(metric) }}</td>
+                                <td><a target="_blank" :href="cityUrl + 'department/' + metric.category1"><i class="material-icons grey-text">call_made</i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Structure -->
+        <div :id="'modal' + thing.i" class="modal modal-fixed-footer" v-for="thing in showKPI">
+            <div class="modal-content white">
+                <h5 class="grey-text text-darken-1">Select a metric from below</h5>
+                <ul>
+                    <li v-for="metric in metricData" v-on:click="storeKPI(thing.i, metric)" v-if="metric.metricName" class="modal-close modal-li">
+                        <p class="grey-text text-darken-1 left-align">{{ metric.metricName }}</p>
+                        <div class="divider"></div>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer white">
+                <a class="modal-action modal-close waves-effect btn-flat">Close</a>
+            </div>
+        </div>
+    </div>
+    <!-- source code -->
+    <script type="text/javascript" src="app.js"></script>
+</body>

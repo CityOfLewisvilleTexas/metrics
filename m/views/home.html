@@ -1,0 +1,625 @@
+<!--<link rel="stylesheet" href="styles/home.css"/>-->
+<style type="text/css">    
+        .container-fluid{
+            padding-left: 3em !important;
+            padding-right: 3em !important;
+        }
+        /*.container-fluid.ng-scope {
+            background-color: #f5f5f5;
+        }*/
+    /*Navbar*/
+        .navbar { 
+            border-radius: 0px !important; 		 
+            margin-bottom: 0px !important;
+        }
+        .nav-jumbotron{
+            background-color: #5E2590 !important;
+            color: whitesmoke !important;
+            padding-bottom: 1.5em !important;	
+            margin-top: 0 !important;
+            padding-top: 0 !important;	
+			margin-bottom: 5px !important;
+        }
+        .nav-city-logo{
+            height: 125px;
+            margin-left: -25px;
+        }
+        .nav-site-title{
+            text-shadow: 1px 1px black;
+            border-bottom: solid 1px;
+            font-weight: normal !important;
+            font-size: 2.5em !important;
+            margin-top: -10px !important;
+        }
+        .nav-site-title > small{
+            color: yellow !important;
+        }
+        .nav-site-description{
+            font-size: 1em !important;
+        }
+        .nav-site-description a{
+            color: whitesmoke;
+            text-decoration: underline;
+        }
+        .nav-site-description a:hover{
+            color: yellow;
+            text-decoration: underline;
+        }
+        .nav-tabs > li.active{
+            font-weight: bold !important;
+            color: black;
+            font-size: 1.25em;
+        }
+
+    /*Gauge Area*/
+        .section-chart-container{
+            height: 125px;		
+        }
+        .section-chart-title{
+            height: 15px;
+            font-size: 0.9em;
+            text-align: center;
+        }
+        .section-chart{
+            height: 90px;
+            width: 100%;
+            text-align: center;
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .section-chart > table{
+            margin: auto !important; /*centers svg chart in horizontal middle*/
+        }
+        .section-chart-lastimported{
+            height: 30px;
+            font-size: 0.7em;
+            text-align: center;
+        }
+        .section-chart-no-metric{
+            height: 125px;
+            font-size: 0.8em;
+            text-align: center;
+            padding-top: 15%;
+            color: gray;
+        }
+        .carousel-control{
+            background-image: none !important;
+            color: #5E2590;
+        }
+        .carousel-indicators{
+            display:none !important;
+        }
+
+    /*Tabs*/
+        .page-description {
+            padding-bottom: 16px
+        }
+        .category-description{
+            padding-top: 1em;
+        }
+        .category-holder {
+            display: inline-block;
+        }
+        /*.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+            background-color: #f5f5f5 !important;
+            box-shadow: 0 -1px 3px rgba(0,0,0,0.03), 0 -1px 2px rgba(0,0,0,0.2)
+        }*/
+
+    /*Cards*/
+        .section-link-container{
+            background-color: white;
+            margin: 1em !important;	
+            padding: 1.5em 1.5em 1.5em 1.5em !important;
+            height: 345px;
+            max-width: 360px !important;
+            transform: translateZ(0);
+            border-radius: 5% !important;
+            /*border-radius: 4px !important;*/
+            box-shadow: 0 5px 10px dimgray,0 5px 10px dimgray;			
+            /*box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);*/
+        }	
+        .section-title{
+            text-align: center;
+            height: 30px;
+            margin-top: 0;
+            font-size: 1.7em !important;
+			margin-bottom: 0px !important;
+        }
+        .section-icon {
+            text-align:center;
+            font-size: 1.25em;
+            height: 25px;
+            color: #5E2590;
+            border-bottom: solid 1px gainsboro;
+        }
+        .section-description{
+            height: 62px;
+            border-bottom: solid 1px gainsboro;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            color: #707070;
+        }
+        .section-link-to-details{
+            padding-top: 0.9em;
+        }
+        .section-link-disabled {
+            cursor: not-allowed;
+            pointer-events: none;
+            color: lightblue;
+        }
+
+    /*Gauges*/
+		.static-metric-value{
+			/*Center horizontally and vertically*/
+			display: flex;
+            justify-content: center;
+            align-items: center;
+		}
+		.static-metric-value > div{
+			font-size: 5em;
+			font-weight: normal;
+			color: green;
+		}
+        .gauge svg{
+            zoom: 50%;
+        }
+        /*Firefox specific zoom for size of gauge*/
+        @-moz-document url-prefix() {
+            .gauge svg{
+                -moz-transform: scale(0.5);
+                margin-top: -50px;
+            }
+        }
+        .gauge-holder {
+            text-align: center;
+        }
+
+    /*...............................................................*/    
+    /*Media Queries*/
+        /*Phones and Tablets*/
+            @media only screen and (max-width: 1024px){
+                .section-title{
+                    margin-left: -1em;
+                    margin-right: -1em;
+                }
+            }
+        /*Phones: Screen is less than 768px wide*/
+            @media only screen and (max-width: 767px){ 
+                .container-fluid{
+                    padding-left: 1em !important;
+                    padding-right: 1em !important;
+                }
+                .section-link-container{
+                    height: 100%;
+                }
+                .section-description{
+                    height: 100%;
+                }                
+            }
+        /*Tablets: Screen is greater than 767px and less than 1025px (iPad Landscape)*/
+            @media only screen and (min-width: 768px) and (max-device-width: 1024px){
+                .section-link-container{
+                    width: 285px !important;
+                }
+                .section-description{
+                    height: 60px;
+                }
+            }
+        
+        /*Desktops: Screen is greater than 1024px (iPad Landscape)*/
+            @media only screen and (min-width: 1025px){ 
+
+            }
+</style>
+
+
+
+<!--  -->
+<div class="jumbotron nav-jumbotron">
+    <div class="container-fluid">
+        <image class="nav-city-logo" src="images/citylogo.svg" alt="City Logo">
+        <h1 class="nav-site-title">Performance Dashboard <small>BETA</small></h1>
+        <p class="nav-site-description">It is the goal of the <a href="http://www.cityoflewisville.com">City of Lewisville, Texas</a> to provide our residents and visitors with metrics that indicate if we are performing at the level expected and deserved. This site displays data captured live from city software applications to help us and you see how we are doing.</p>
+    </div>
+</div>
+
+<!--Container-->
+<div class="container-fluid">      
+	<i><small>Data is automatically refreshed every 15 minutes.</small></i>
+	<br>
+	<br>
+    <div class="page-description">
+        <p>
+            The City of Lewisville continues to utilize performance measures as a part of its commitment to accountability, open communication, and continuous improvement. Performance measures allow the City to continuously evaluate the effectiveness and efficiency of its operations. Information gathered through performance measurement helps the City improve the delivery of services, the management of resources and the quality of policy recommendations. Performance measurement is a management tool utilized to help "keep the finger on the pulse" of critical City services and activities.
+            <br><br>
+            Most importantly, the City's performance measures help evaluate progress made toward achieving the City's Priorities and Big Moves. Several metrics are linked to each Priority and Big Move. Performance measures help gauge the success of these actions in effectively fulfilling the objectives and goals. The City of Lewisville's performance measures are derived through a variety of sources. City employees created meaningful internal operational performance measures and performance targets. In addition, the City conducts an annual Citizen Survey to gather citizen's views of the quality of life and City services in Lewisville. Other metrics show the City's awards and ratings by various organizations. Take a closer look below at the metrics currently available regarding the City of Lewisville.
+        </p>
+    </div>
+	
+    <!--Tabs-->
+    <div class="row">
+    <div class="col-md-12">              
+        <ul class="nav nav-tabs">
+		
+			<!--Departments-->
+			<li ng-class="{'active': vm.tab=='department'}">
+                <a data-toggle="tab" data-target="#department" href="#/home/department" ng-click="vm.tab = 'department'">Departments</a>
+            </li>
+			
+			<!--City Priorities-->
+            <li ng-class="{'active': vm.tab=='priority'}">
+                <a data-toggle="tab" data-target="#priority" href="#/home/priority" ng-click="vm.tab = 'priority'">City Priorities</a>
+            </li>
+			
+			<!--2025 Big Moves-->
+            <li ng-class="{'active': vm.tab=='bigmove'}">
+                <a data-toggle="tab" data-target="#bigmove" href="#/home/bigmove" ng-click="vm.tab = 'bigmove'">Big Moves</a>
+            </li>
+
+        </ul>
+    </div>
+    </div> <!--end .row-->
+
+    <div class="row">
+		
+        <!--Tabs-->
+        <div ng-repeat="cat in ['priority','bigmove','department']">
+
+            <div id="{{cat}}" class="col-md-12 tab-pane fade" ng-class="{'in active': vm.tab==cat}" ng-if="vm.tab == cat"> 
+
+                <!--Tab-Category Descriptions-->
+                <div class="category-description" ng-if="vm.tab == 'priority'">
+                    <p>City priorities are set by the <a href="http://www.cityoflewisville.com/about-us/city-council">City Council</a>. These are strategic in nature and not operational.</p>
+                </div>
+
+                <div class="category-description" ng-if="vm.tab == 'bigmove'">
+                    <p>In July of 2014, the Lewisville City Council unanimously approved the adoption of the Lewisville 2025 Vision plan. Lewisville 2025 is a strategic plan designed to guide the development of the City of Lewisville over the next 10-15 years.  There are nine Big Moves, indicating nine areas of focus, with each representing big-ticket items that will have the greatest impact to move Lewisville forward by 2025.</p>
+    				
+    				<a href="https://drive.google.com/file/d/0B9hEgc2yIiLFeGlvNlRpV0JhMGc/view?usp=sharing" target="_blank">Annual Report</a>
+    				<br>
+                </div>
+
+                <!-- Category Cards (from vm.categories) for the Departments tab-->
+                <!-- automatic metrics -->
+                <div class="category-description" ng-if="vm.tab == 'department'">
+                    <h3>Query</h3>
+                    <p>The below metrics are calculated using various City databases and are automatically updated as data in those databases change.</p>
+                </div>
+                <div class="category-holder">
+                    <div
+                        ng-repeat="v in vm.categories.filter_by_type(cat) | orderBy: 'orderby'"
+                        ng-if="vm.metrics.filter_by_category_type(cat,v.id).length > 0 && vm.tab == 'department' && vm.metrics.type_exists('query', v.id)"
+                        class="col-lg-4 col-md-4 col-sm-6 section-link-container">
+                        
+                        <!--Category info (Priority, Big Move, Department) (from vm.categories)-->
+                        <h2 class="section-title">{{v.title}}</h2>
+                        <div class="section-icon"><div class="glyphicon glyphicon-{{v.icon}}"></div></div>
+                        <div class="section-description">{{v.description}}</div>
+
+                        <!--Gauges-->
+                        <div class="section-chart-container" ng-if="v.metric != ''">
+                            
+                            <!--No Metrics for this category-->
+                            <div 
+                                class="section-chart" 
+                                ng-if="vm.metrics.filter_by_category_type(cat,v.id).length == 0">
+                                Metrics being developed
+                            </div>
+
+                            <!--Carousel-->
+                            <!-- <carousel interval="3000 + ($index * 250)" class="carousel"> -->
+                                <div class="gauge-holder" active="metric.active" ng-if="vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].metrictype.toLowerCase() == 'query'">
+                                    
+                                    <!-- testing -->
+                                    <!-- <p>{{ vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].metrictype.toLowerCase() }}</p> -->
+
+                                    <!--Metric Title-->
+                                    <div class="section-chart-title">[&nbsp{{ vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].realtimeshortname.substr(0,45) + (vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].realtimeshortname.length > 45 ? "..." : "" ) || "Loading..."}}&nbsp]</div>
+                                    
+                                    <!--Gauge via ng-chart.js-->
+                                    <div 
+                                        ng-if="vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].metrictype.toLowerCase() == 'query' || (vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].metrictype.toLowerCase() == 'static' && vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].staticsymbol.toLowerCase() == 'gauge')"
+                                        class="section-chart gauge" 
+                                        google-chart 
+                                        chart="vm.charts.gauge_{{vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].id}}">
+                                    </div>
+                                    <!-- <div>GAUGE HERE</div>
+                                    <div>GAUGE HERE</div>
+                                    <div>GAUGE HERE</div>
+                                    <div>GAUGE HERE</div> -->
+                                    
+                                    <!--Last imported-->                                
+                                    <div 
+                                        ng-if="(vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].metrictype.toLowerCase() == 'query' || (vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].metrictype.toLowerCase() == 'static' && vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].staticsymbol.toLowerCase() == 'gauge')) && vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].hidelastrefreshed != 'true'"
+                                        class="section-chart-lastimported" >
+                                        As of: {{vm.util.ui_DateDifference(vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].gaugedata[0].lastimported)}}<br>{{vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].gaugedata[0].lastimported}}
+                                    </div>
+                                    <div 
+                                        ng-if="(vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].metrictype.toLowerCase() == 'static' && vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].staticsymbol.toLowerCase() != 'gauge') && vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].hidelastrefreshed != 'true'"
+                                        class="section-chart-lastimported" >
+                                        As of: {{vm.util.ui_DateDifference(vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].psofia_finallastediteddate)}}<br>{{vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].psofia_finallastediteddate}}
+                                    </div>
+                                    
+                                </div>    
+                            <!-- </carousel>   -->
+                        </div>
+
+                        <!--Link to view all metrics assigned to this category-->
+                        <div class="section-link-to-details" style="z-index: 1;">
+                            <!-- <a 
+                                class="btn btn-sm btn-primary" 
+                                href="#/details/{{cat}}/{{v.id}}" 
+                                role="button" 
+                                ng-class="{'section-link-disabled': vm.metrics.filter_by_category_type(cat,v.id).length == 0}"
+                                >View All &nbsp({{vm.metrics.filter_by_category_type(cat,v.id).length}}) &raquo;
+                            </a> -->
+                            <a 
+                                class="btn btn-sm btn-primary"
+                                href="#/details/{{ cat }}/{{ v.id }}"
+                                ng-class="{'section-link-disabled' : vm.metrics.filter_by_category_type(cat, v.id).length == 0}" >
+                                View All ({{ vm.metrics.filter_by_category_type(cat, v.id).length }}) &raquo;
+                            </a>
+                        </div>
+
+                    </div>
+                </div>                
+
+                <!-- Category Cards (from vm.categories) for the Departments tab-->
+                <!-- static metrics -->
+                <div class="category-description" ng-if="vm.tab == 'department'">
+                    <h3>Static</h3>
+                    <p>The below metrics come from various data sources including reports, awards, associations, and surveys. City staff manually update these measures as the reports, surveys, or awards arrive.</p>
+                </div>
+                <div class="category-holder">
+                    <div
+                        ng-repeat="v in vm.categories.filter_by_type(cat) | orderBy: 'orderby'"
+                        ng-if="vm.metrics.filter_by_category_type(cat,v.id).length > 0 && vm.tab == 'department' && vm.metrics.type_exists('static', v.id)"
+                        class="col-lg-4 col-md-4 col-sm-6 section-link-container">
+                        
+                        <!--Category info (Priority, Big Move, Department) (from vm.categories)-->
+                        <h2 class="section-title">{{v.title}}</h2>
+                        <div class="section-icon"><div class="glyphicon glyphicon-{{v.icon}}"></div></div>
+                        <div class="section-description">{{v.description}}</div>
+
+                        <!--Gauges-->                        
+                        <div class="section-chart-container" ng-if="v.metric != ''">
+                            
+                            <!--No Metrics for this category-->
+                            <div 
+                                class="section-chart" 
+                                ng-if="vm.metrics.filter_by_category_type(cat,v.id).length == 0">Metrics being developed
+                            </div>
+
+                            <!--Carousel-->
+                            <!-- <carousel interval="3000 + ($index * 250)" class="carousel"> -->
+                                <div class="gauge-holder" active="metric.active" ng-if="vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].metrictype.toLowerCase() == 'static'">
+                                    
+                                    <!-- testing -->
+                                    <!-- <p>{{ vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].metrictype.toLowerCase() }}</p> -->
+
+                                    <!--Metric Title-->
+                                    <div class="section-chart-title">[&nbsp{{ vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].realtimeshortname.substr(0,45) + (vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].realtimeshortname.length > 45 ? "..." : "" ) || "Loading..."}}&nbsp]</div>
+                                    
+                                    <!--Gauge via ng-chart.js-->
+                                    <div 
+                                        ng-if="vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].metrictype.toLowerCase() == 'static' && vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].staticsymbol.toLowerCase() == 'gauge'"
+                                        class="section-chart gauge" 
+                                        google-chart 
+                                        chart="vm.charts.gauge_{{vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].id}}">
+                                    </div>
+                                    <!-- <div ng-if="vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].metrictype.toLowerCase() == 'static' && vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].staticsymbol.toLowerCase() == 'gauge'">STATIC GAUGE HERE</div>
+                                    <div ng-if="vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].metrictype.toLowerCase() == 'static' && vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].staticsymbol.toLowerCase() == 'gauge'">STATIC GAUGE HERE</div>
+                                    <div ng-if="vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].metrictype.toLowerCase() == 'static' && vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].staticsymbol.toLowerCase() == 'gauge'">STATIC GAUGE HERE</div>
+                                    <div ng-if="vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].metrictype.toLowerCase() == 'static' && vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].staticsymbol.toLowerCase() == 'gauge'">STATIC GAUGE HERE</div> -->
+                                    
+                                    <!--Static-Metric Symbol or Text-->
+                                    <div 
+                                        ng-if="vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].metrictype.toLowerCase() == 'static' && vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].staticsymbol.toLowerCase() != 'gauge'"
+                                        class="gauge row static-metric-value">
+                                        <div>
+                                            <span ng-if="vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].staticsymbol.toLowerCase() == 'icon'" class="glyphicon glyphicon-{{vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].staticicon}}"></span>
+                                            <span ng-if="vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].staticsymbol.toLowerCase() == 'text'" class="static-metric-value">{{vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].statictext}}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!--Last imported-->                                
+                                    <div 
+                                        ng-if="(vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].metrictype.toLowerCase() == 'query' || (vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].metrictype.toLowerCase() == 'static' && vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].staticsymbol.toLowerCase() == 'gauge')) && vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].hidelastrefreshed != 'true'"
+                                        class="section-chart-lastimported" >
+                                        As of: {{vm.util.ui_DateDifference(vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].gaugedata[0].lastimported)}}<br>{{vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].gaugedata[0].lastimported}}
+                                    </div>
+                                    <div 
+                                        ng-if="(vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].metrictype.toLowerCase() == 'static' && vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].staticsymbol.toLowerCase() != 'gauge') && vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].hidelastrefreshed != 'true'"
+                                        class="section-chart-lastimported" >
+                                        As of: {{vm.util.ui_DateDifference(vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].psofia_finallastediteddate)}}<br>{{vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].psofia_finallastediteddate}}
+                                    </div>
+                                    
+                                </div>    
+                            <!-- </carousel>   -->
+                        </div>
+
+                        <!--Link to view all metrics assigned to this category-->
+                        <div class="section-link-to-details" style="z-index: 1;">
+                            <a 
+                                class="btn btn-sm btn-primary" 
+                                href="#/details/{{cat}}/{{v.id}}" 
+                                role="button" 
+                                ng-class="{'section-link-disabled': vm.metrics.filter_by_category_type(cat,v.id).length == 0}"
+                                >View All &nbsp({{vm.metrics.filter_by_category_type(cat,v.id).length}}) &raquo;
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!--Category Cards (from vm.categories) for city priorities and big moves-->
+                <!-- QUERY -->
+                <div class="category-description" ng-if="vm.tab != 'department'">
+                    <h3>Query</h3>
+                    <p>This is a description of query metrics and I'm not sure exactly what will go here but I'm just typing to make it a little longer so I can get idea of what it will look like with a paragraph here blah blah blah blah blah blah blah.</p>
+                </div>
+                <div class="category-holder">
+                    <div 
+                        ng-repeat="v in vm.categories.filter_by_type(cat) | orderBy: 'orderby'"
+                        ng-if="vm.metrics.filter_by_category_type(cat,v.id).length > 0 && vm.tab != 'department'"
+                        class="col-lg-4 col-md-4 col-sm-6 section-link-container">
+
+                        <!--Category info (Priority, Big Move, Department) (from vm.categories)-->
+                        <h2 class="section-title">{{v.title}}</h2>
+                        <div class="section-icon"><div class="glyphicon glyphicon-{{v.icon}}"></div></div>
+                        <div class="section-description">{{v.description}}</div>
+                        
+                        <!--Gauges-->                        
+                        <div class="section-chart-container" ng-if="v.metric != ''">
+                            
+                            <!--No Metrics for this category-->
+                            <div 
+                                class="section-chart" 
+                                ng-if="vm.metrics.filter_by_category_type(cat,v.id).length == 0">Metrics being developed
+                            </div>
+
+                            <!--Carousel-->
+                            <!-- <carousel interval="3000 + ($index * 250)"> -->
+                                <div active="metric.active">
+                                    
+                                    <!--Metric Title-->
+                                    <div class="section-chart-title">[&nbsp{{ vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].realtimeshortname.substr(0,45) + (vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].realtimeshortname.length > 45 ? "..." : "" ) || "Loading..."}}&nbsp]</div>
+    								
+    								<!--Gauge via ng-chart.js-->
+    								<div 
+    									ng-if="vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].metrictype.toLowerCase() == 'query' || (vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].metrictype.toLowerCase() == 'static' && vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].staticsymbol.toLowerCase() == 'gauge')"
+    							        class="section-chart gauge" 
+    									google-chart 
+    									chart="vm.charts.gauge_{{vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].id}}">
+    								</div>
+    								
+    								<!--Static-Metric Symbol or Text-->
+    								<div 
+    									ng-if="vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].metrictype.toLowerCase() == 'static' && vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].staticsymbol.toLowerCase() != 'gauge'"
+    									class="gauge row static-metric-value">
+    									<div>
+    										<span ng-if="vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].staticsymbol.toLowerCase() == 'icon'" class="glyphicon glyphicon-{{vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].staticicon}}"></span>
+    										<span ng-if="vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].staticsymbol.toLowerCase() == 'text'" class="static-metric-value">{{vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].statictext}}</span>
+    									</div>
+    								</div>
+    								
+                                    <!--Last imported-->								
+    								<div 
+    									ng-if="(vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].metrictype.toLowerCase() == 'query' || (vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].metrictype.toLowerCase() == 'static' && vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].staticsymbol.toLowerCase() == 'gauge')) && vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].hidelastrefreshed != 'true'"
+    									class="section-chart-lastimported" >
+                                        As of: {{vm.util.ui_DateDifference(vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].gaugedata[0].lastimported)}}<br>{{vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].gaugedata[0].lastimported}}
+    								</div>
+    								<div 
+    									ng-if="(vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].metrictype.toLowerCase() == 'static' && vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].staticsymbol.toLowerCase() != 'gauge') && vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].hidelastrefreshed != 'true'"
+    									class="section-chart-lastimported" >
+                                        As of: {{vm.util.ui_DateDifference(vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].psofia_finallastediteddate)}}<br>{{vm.metrics.filter_by_category_metricType(cat,v.id, 'query')[0].psofia_finallastediteddate}}
+    								</div>
+    								
+                                </div>    
+                            <!-- </carousel>         -->
+                        </div>
+
+                        <!--Link to view all metrics assigned to this category-->
+                        <div class="section-link-to-details" style="z-index: 1;">
+                            <a 
+                                class="btn btn-sm btn-primary" 
+                                href="#/details/{{cat}}/{{v.id}}" 
+                                role="button" 
+                                ng-class="{'section-link-disabled': vm.metrics.filter_by_category_type(cat,v.id).length == 0}"
+                                >View All &nbsp({{vm.metrics.filter_by_category_type(cat,v.id).length}}) &raquo;
+                            </a>
+                        </div>  
+                    </div> <!--end ngRepeat v-->
+                </div>
+
+                <!--Category Cards (from vm.categories) for city priorities and big moves-->
+                <!-- STATIC -->
+                <div class="category-description" ng-if="vm.tab != 'department'">
+                    <h3>Static</h3>
+                    <p>This is a description of static metrics and I'm not sure exactly what will go here but I'm just typing to make it a little longer so I can get idea of what it will look like with a paragraph here blah blah blah blah blah blah blah.</p>
+                </div>
+                <div class="category-holder">
+                    <div 
+                        ng-repeat="v in vm.categories.filter_by_type(cat) | orderBy: 'orderby'"
+                        ng-if="vm.metrics.filter_by_category_type(cat,v.id).length > 0 && vm.tab != 'department'"
+                        class="col-lg-4 col-md-4 col-sm-6 section-link-container">
+
+                        <!--Category info (Priority, Big Move, Department) (from vm.categories)-->
+                        <h2 class="section-title">{{v.title}}</h2>
+                        <div class="section-icon"><div class="glyphicon glyphicon-{{v.icon}}"></div></div>
+                        <div class="section-description">{{v.description}}</div>
+                        
+                        <!--Gauges-->                        
+                        <div class="section-chart-container" ng-if="v.metric != ''">
+                            
+                            <!--No Metrics for this category-->
+                            <div 
+                                class="section-chart" 
+                                ng-if="vm.metrics.filter_by_category_type(cat,v.id).length == 0">Metrics being developed
+                            </div>
+
+                            <!--Carousel-->
+                            <!-- <carousel interval="3000 + ($index * 250)"> -->
+                                <div active="metric.active">
+                                    
+                                    <!--Metric Title-->
+                                    <div class="section-chart-title">[&nbsp{{ vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].realtimeshortname.substr(0,45) + (vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].realtimeshortname.length > 45 ? "..." : "" ) || "Loading..."}}&nbsp]</div>
+                                    
+                                    <!--Gauge via ng-chart.js-->
+                                    <div 
+                                        ng-if="vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].metrictype.toLowerCase() == 'query' || (vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].metrictype.toLowerCase() == 'static' && vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].staticsymbol.toLowerCase() == 'gauge')"
+                                        class="section-chart gauge" 
+                                        google-chart 
+                                        chart="vm.charts.gauge_{{vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].id}}">
+                                    </div>
+                                    
+                                    <!--Static-Metric Symbol or Text-->
+                                    <div 
+                                        ng-if="vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].metrictype.toLowerCase() == 'static' && vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].staticsymbol.toLowerCase() != 'gauge'"
+                                        class="gauge row static-metric-value">
+                                        <div>
+                                            <span ng-if="vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].staticsymbol.toLowerCase() == 'icon'" class="glyphicon glyphicon-{{vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].staticicon}}"></span>
+                                            <span ng-if="vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].staticsymbol.toLowerCase() == 'text'" class="static-metric-value">{{vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].statictext}}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!--Last imported-->                                
+                                    <div 
+                                        ng-if="(vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].metrictype.toLowerCase() == 'query' || (vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].metrictype.toLowerCase() == 'static' && vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].staticsymbol.toLowerCase() == 'gauge')) && vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].hidelastrefreshed != 'true'"
+                                        class="section-chart-lastimported" >
+                                        As of: {{vm.util.ui_DateDifference(vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].gaugedata[0].lastimported)}}<br>{{vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].gaugedata[0].lastimported}}
+                                    </div>
+                                    <div 
+                                        ng-if="(vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].metrictype.toLowerCase() == 'static' && vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].staticsymbol.toLowerCase() != 'gauge') && vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].hidelastrefreshed != 'true'"
+                                        class="section-chart-lastimported" >
+                                        As of: {{vm.util.ui_DateDifference(vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].psofia_finallastediteddate)}}<br>{{vm.metrics.filter_by_category_metricType(cat,v.id, 'static')[0].psofia_finallastediteddate}}
+                                    </div>
+                                    
+                                </div>    
+                            <!-- </carousel>         -->
+                        </div>
+
+                        <!--Link to view all metrics assigned to this category-->
+                        <div class="section-link-to-details" style="z-index: 1;">
+                            <a 
+                                class="btn btn-sm btn-primary" 
+                                href="#/details/{{cat}}/{{v.id}}" 
+                                role="button" 
+                                ng-class="{'section-link-disabled': vm.metrics.filter_by_category_type(cat,v.id).length == 0}"
+                                >View All &nbsp({{vm.metrics.filter_by_category_type(cat,v.id).length}}) &raquo;
+                            </a>
+                        </div>  
+                    </div> <!--end ngRepeat v-->
+                </div>
+
+            </div> <!--end tab-category-->
+
+        </div> <!--end ngRepeat cat-->
+
+    </div> <!--end .row-->
+
+</div> <!-- /container 

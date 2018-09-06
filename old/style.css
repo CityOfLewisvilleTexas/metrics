@@ -1,0 +1,344 @@
+[v-cloak] { display: none }
+
+body {
+    background-color: #edf1f3;
+}
+
+.city-purple {
+    background-color: #5d2490;
+}
+
+.metvalue {
+    width: 16px;
+}
+.greenv {
+    background-color: #048204;
+}
+.amberv {
+    background-color: #10d310;
+}
+.redv {
+    background-color: #f44336;
+}
+
+#logo {
+    vertical-align: middle;
+    margin: auto 12px;
+    display: inline-block;
+    height: 57px;
+    width: 110px;
+    background-image: url(CityLogos/citylogo.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+#intro {
+    position: relative;
+    font-size: 12px;
+    line-height: 13px;
+    background-color: rgba(0, 0, 0, 0.06);
+    border-radius: 3px;
+    padding: 16px;
+    border-color: #673ab7;
+    border-left: 4px solid #673ab7;
+    margin: 0;
+}
+
+#intro-holder {
+    padding: 16px !important;
+}
+
+#pie-chart {
+    /*height: 100%;*/
+}
+
+#pie-holder {
+    /*margin-top: 12px;*/
+}
+
+.preloader-wrapper {
+    position: absolute !important;
+    top: calc(50vh - 25px) !important;
+    left: calc(50vw - 25px) !important;
+}
+
+#cityscore {
+    /*font-family: "Product Sans";*/
+    font-size: 60px;
+    line-height: 60px;
+    font-weight: 400;
+    /*margin-top: -105px;*/
+    position: relative;
+    color: #666;
+    pointer-events: none;
+}
+
+#cityscore+span {
+    font-size: 8px;
+}
+
+#nav-title {
+    font-size: 1.25rem;
+}
+
+.metrics-table tbody tr {
+    /*cursor: pointer;*/
+}
+
+.no-col-gap {
+    padding: 0 !important;
+}
+
+.kpi-holder {
+    order: 1;
+}
+
+.kpi {
+    /*padding: 16px;*/
+    overflow: hidden;
+}
+
+.kpi-value {
+    font-weight: 500;
+    font-size: 40px;
+    margin: 0;
+    color: #666;
+}
+
+.kpi-title {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 18px;
+    text-align: left;
+    padding: 16px;
+    height: calc(17px * 4 + 0px);
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.close-btn span {
+    /*margin-right: -12px;*/
+    /*margin-top: -12px;*/
+    font-size: 18px;
+    cursor: pointer;
+}
+.close-btn:hover {
+    /*cursor: pointer;*/
+}
+
+.close-btn {
+    height: 18px;
+}
+
+#intro-close {
+    margin-right: -12px;
+    margin-top: -12px;
+}
+
+.kpi-add-btn {
+    padding: 20px;
+    border-radius: 20px;
+    color: white !important;
+    transition: background-color 0.05s ease-in-out;
+}
+
+.kpi-add-btn:hover {
+    background-color: #757575 !important;
+}
+
+.chooser-modal .modal-content {
+    height: calc(100% - 20px) !important;
+}
+
+.modal-li p {
+    padding: 16px;
+    margin: 0;
+}
+
+.modal-li:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.card.table-container:nth-child(3) {
+    margin-top: -8px;
+}
+
+.metrics-table th {
+    padding: 4px;
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.54);
+    white-space: nowrap;
+}
+
+.metrics-table tbody tr td:last-child {
+    width: 13px;
+}
+
+.metrics-table th span {
+    font-size: 15px !important;
+}
+
+.metrics-table thead .material-icons {
+    font-size: 19px !important;
+    transform: translateY(4px);
+}
+
+.metrics-table tbody .material-icons {
+    font-size: 19px !important;
+    transform: translateY(5px);
+}
+
+.clickable:hover {
+    cursor: pointer;
+}
+
+.metrics-table td {
+    padding: 3px 4px;
+    font-weight: 400;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.87);
+    /*line-height: 26px;*/
+}
+
+.metrics-table tbody tr, .kpi {
+    cursor: pointer;
+}
+
+.bold {
+    font-weight: bold !important;
+}
+
+.metrics-table td:nth-child(3) {
+    /*font-weight: bold;*/
+    padding-right: 8px;
+}
+/*.metrics-table td:nth-child(4), .metrics-table td:nth-child(5) {
+    font-weight: bold;
+}*/
+
+.metrics-table a {
+    font-size: 8px;
+}
+
+#sidenav-overlay {
+    z-index: 0 !important;
+}
+
+#sort-container {
+    margin: 0 !important;
+}
+
+#kpi-0 {
+    margin: 0 auto;
+}
+
+#timerbar {
+    height: 2px;
+    background-color: red;
+    width: 100%;
+    margin: 0 auto;
+    transition: width 15.0s linear;
+}
+#timerbar.snap {
+    transition: none;
+}
+
+.metric-modal-title {
+    margin-bottom: 28px;
+}
+
+.metric-int {
+    font-size: 7rem;
+    line-height: 2;
+    /*font-size: 4vw;*/
+    font-family: "Product Sans";
+}
+
+.metric-details {
+    margin-bottom: 34px;
+}
+
+.righty .header {
+    font-weight: bold;
+    border-bottom: 1px solid lightgrey;
+    margin-top: 8px;
+}
+
+.righty .btn-holder a {
+    margin-bottom: 8px;
+}
+
+#metric-gauge {
+    display: inline-block;
+}
+
+.lefty table {
+    width: auto;
+    display: inline-block;
+}
+
+
+/* flex-box magic to swap the table position when on mobile*/
+
+.flexy {
+    margin: 0 !important;
+}
+
+@media (max-width: 992px) {
+    .flexy {
+        display: flex;
+        flex-direction: column;
+    }
+    .swap-a {
+        order: 1;
+    }
+}
+
+@media (max-width: 601px) {
+    .metrics-table th {
+        padding: 9px 5px;
+        font-size: 10px;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.54);
+        white-space: nowrap;
+    }
+    .metrics-table td {
+        padding: 15px 5px;
+        font-weight: 400;
+        font-size: 11px;
+        color: rgba(0, 0, 0, 0.87);
+        line-height: 11px;
+    }
+}
+
+.carousel-item > div {
+    padding: 4px 36px !important;
+}
+
+
+
+/* EXPERIMENTAL */
+
+.col {
+    /*border: 1px solid grey !important;*/
+}
+
+.close-btn {
+    display: none;
+}
+
+.kpi.card:hover .close-btn,
+.close-btn.hover,
+#intro:hover .close-btn {
+    display: block;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    cursor: pointer;
+}
+
+.kpi-holder .row {
+    margin: 0;
+}

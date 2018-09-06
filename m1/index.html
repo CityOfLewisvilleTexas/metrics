@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Metrics Redirect</title>
+    <meta charset="utf-8" />
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+</head>
+<body>
+    <div id="app"></div>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {},
+            mounted: function() {
+                this.checkUrl()
+            },
+            methods: {
+                checkUrl: function() {
+                    if (location.href.indexOf('#/') <= 0) return
+                    var words = location.href.substring(location.href.indexOf('#/')+2).split('/')
+                    var link = 'http://metrics.cityoflewisville.com/d/#/dashboard/public/details/' + words[1]
+                    location.href=link
+                }
+            }
+        })
+    </script>
+</body>
